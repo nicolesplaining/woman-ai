@@ -13,8 +13,23 @@ Upload photos or a LiDAR scan of an arm and get a print-ready kit: a hand scaled
 - Current sizing methods, per e-NABLE's own docs:
   - **Blender method**: most reliable, but takes about 21 minutes of tutorials to learn.
   - **Two-measurement spreadsheet**: e-NABLE notes it "may not produce a properly fitting device."
-  - **AI HandSizer (photo-based)**: still in testing, Phoenix v3 only, about 1.2 cm average error.
+  - **AI HandSizer (photo-based)**: one photo of the sound hand next to a card; still in testing, Phoenix v3 only, about 1.2 cm average error in its designer's own tests.
+  - **Handomatic**: web app that outputs pre-scaled STLs from knuckle width and palm length.
+  - All of these produce **one uniform scale factor** for a stock design.
 - Gauntlets are often fitted by hand by heating them (heat gun or hot water) and forming them over the limb or a plaster cast. That's slow, skilled work and the step this project replaces.
+
+### Base hand model choice
+
+| Design | Status in e-NABLE catalog | Format | Fit for this project |
+|---|---|---|---|
+| **Paraglider** (Flexible Flyer, Marcus Mendenhall) | Listed under "other" designs | OpenSCAD source; joints cut *after* the shape is scaled, so pins stay standard size | **Use for generation.** The only one built to be scaled in code. Gauntlet comes from Phoenix Reborn / Raptor Reloaded repos |
+| **Phoenix Hand v3** | Currently recommended | STL / CAD files | **Use as the baseline.** AI HandSizer supports it, so we can compare against e-NABLE's own photo tool |
+| Kinetic Hand | Currently recommended | STL / CAD files | Possible later target |
+| Osprey Hand | Currently recommended | STL / CAD files | Possible later target |
+| UnLimbited Phoenix | Phoenix variant | STL | Easiest to print and assemble (palm mesh built in, no 13 screws); good backup for the demo print |
+| Raptor / Raptor Reloaded | Not recommended for functional use (fails pinch testing) | STL | Avoid, except for quick scale tests |
+
+Key question for hours 0–2: can Paraglider take **separate width and length scale factors** without breaking its joints? Every e-NABLE sizing method today outputs one uniform scale %, and that is the gap for women (see below).
 
 ### Prior art
 
@@ -25,7 +40,21 @@ Upload photos or a LiDAR scan of an arm and get a print-ready kit: a hand scaled
 - A University of Michigan study (*Journal of Clinical and Translational Science*, insurance data on 4,000+ patients) estimated women wait about 33% longer than men for a first prosthesis.
 - A VA cohort study found time to prosthetic prescription was significantly shorter for men.
 - A 2021 *Journal of Vascular Surgery* paper found women are less likely to be referred to a prosthetist at all.
+- Women were successfully fitted with a prosthesis at discharge less often than men: 42.9% vs. 68.6% (n=105).
+- Women have historically made up under 5% of participants in prosthetic studies (veterans).
 - **Caveat:** these are lower-limb, clinical figures, not e-NABLE data. Pitch it as evidence of a gender gap in prosthetic care, not as an e-NABLE statistic.
+
+### Women's hands differ in shape, not just size
+
+ANSUR II means (secondary summary; recompute from the CSVs):
+
+| | Men (n=4,082) | Women (n=1,986) | Women vs. men |
+|---|---|---|---|
+| Hand length | 193.3 mm | 181.1 mm | 6.3% shorter |
+| Hand breadth | 88.3 mm | 78.2 mm | 11.4% narrower |
+| Breadth ÷ length | 0.457 | 0.432 | relatively narrower |
+
+If a base model has average male proportions and is scaled uniformly, an average woman's device is either about 10 mm too short (scaled to her knuckle width) or about 4.5 mm too wide (scaled to her length). Both are outside e-NABLE's 2–3 mm fit window. e-NABLE doesn't document whose hand its base models came from, so frame this as "one shape stretched evenly can't fit both", not "the models are male".
 
 ## Scope
 
@@ -79,7 +108,7 @@ Both input modes produce the same thing: a 3D shape of the arm plus landmarks, m
 1. **Choose the device (Claude):** pick a design and settings against e-NABLE's rules (which designs need a working wrist, scale limits, age and growth allowance) and explain why.
 2. **Design spec (Claude):** turn the recipient's description and reference images into colors for each part and a pattern for the gauntlet (see [Personalization](#personalization)).
 3. **Generate parts:**
-   - **Hand:** run Paraglider's OpenSCAD files from the command line with the computed scale.
+   - **Hand:** run Paraglider's OpenSCAD files from the command line with separate width and length scales (knuckle width and palm/hand length), falling back to one uniform scale if the joints can't take it. Check the result against ANSUR II women's proportions and flag anything outside the 5th–95th percentile.
    - **Gauntlet:** compute a distance field around the arm and keep a shell from the padding gap out to the gap plus a 3 mm wall. Cut a C-shaped opening so it slips on, add strap slots, attach the stock hinge pieces at the wrist axis, and add the chosen pattern to the outside.
    - **Fit-test ring:** a 15 mm slice of the gauntlet at its tightest point. It prints in about 15 minutes, so fit can be checked before a 6-hour print.
 4. **Printability (code):**
@@ -141,11 +170,42 @@ Many recipients are kids, and a device a kid helped design is one they'll be exc
 - **Patterns:** SVG motifs turned into images with cairosvg, then wrapped onto the gauntlet's outer surface.
 - **Frontend:** React with react-three-fiber. Photo or scan upload, a design box for text and reference images, a 3D viewer showing the colored gauntlet over the arm, a timeline of Claude's reasoning, and downloads.
 
+## Data sources
+
+All public or synthetic; fine for a non-commercial hackathon demo. Check and credit each license.
+
+| Need | Source | Notes |
+|---|---|---|
+| Base hand CAD | [Paraglider / flexible_flyer](https://github.com/mendenm/flexible_flyer), [Phoenix v3](https://hub.e-nable.org/p/devices?p=e-NABLE+Phoenix+Hand+v3), [NIH 3D e-NABLE collection](https://3d.nih.gov/collections/prosthetics), [e-NABLE CAD files](https://hub.e-nable.org/s/e-nable-devices/wiki/423/cad-files-for-e-nable-designs) | Paraglider for generation, Phoenix v3 as baseline |
+| Sizing rules | [e-NABLE Device Sizing](https://enablingthefuture.org/resources-2/e-nable-device-sizing/), [Hand-o-matic](https://webapp.e-nable.me/?t=9), [e-Nable France scaling formula](https://e-nable.fr/en/manufacturing-instructions/matching/scaling/) | Baseline: (measurement + 5 mm) × 2.55 = scale % for Phoenix-family hands |
+| Women's hand measurements | [ANSUR II](https://www.openlab.psu.edu/ansur2/) (separate female CSV, 1,986 women) | Main source. Hand length, hand breadth, hand circumference, palm length, wrist and forearm circumference (confirm column names in the codebook). Units mm; "weight" column is in 0.1 kg. Analyze women and men separately |
+| Civilian cross-check | [NHANES Body Measures](https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BMX_L.htm) | Arm length/circumference; join sex from the demographics file; use survey weights |
+| Photo-based hand data (more women than men) | [BHaM dataset](https://www.nature.com/articles/s41597-026-06939-4) | 726 adults; check its data availability statement |
+| 3D hand shape (stretch) | [MANO](https://mano.is.tue.mpg.de/), [NIMBLE](https://arxiv.org/abs/2202.04533) (16 of 35 subjects women) | Research licenses; for rendering realistic synthetic hands |
+
+No public 3D scan dataset of partial-hand limbs exists, so residual limbs stay synthetic or come from a consenting e-NABLE chapter.
+
+## Accuracy benchmarks
+
+| Benchmark | Number |
+|---|---|
+| ISO 20685-1 (scan-extracted vs. trained measurer, hand dimensions) | ≤ 1 mm mean difference |
+| e-NABLE fit window | 2–3 mm |
+| HandAnthro (2026 preprint, single smartphone photo) | 3.80 mm mean error; 6.17 mm palm/wrist |
+| e-NABLE AI HandSizer (designer's tests) | ~12 mm. Not independently validated: mention as secondary, lead with HandAnthro |
+| **Our target** | **< 2 mm mean error per dimension, reported separately for women** |
+
 ## Testing without amputees
 
 - The gauntlet goes on the forearm, which is intact for partial-hand recipients, so teammates' forearms are realistic test subjects for the main custom part.
 - **Accuracy study:** tape-measure 8–10 people at three points on the forearm, run their photos (and LiDAR scans where possible) through the app, and report the error for each mode in the pitch.
-- **Physical proof:** print fit-test rings for 2–3 people and show they fit.
+- **Recruit at least half women** for the accuracy study and report error by sex.
+- **ANSUR II women check (synthetic, no participants needed):**
+  1. From the female CSV, take the 5th, 50th and 95th percentile hands (and a random sample of ~200 women).
+  2. For each, generate the device two ways: e-NABLE's uniform scale from knuckle width, and our separate width/length scales.
+  3. Measure the generated palm and finger dimensions against that woman's ANSUR values. Report mean error in mm and % within 2 mm, for women and men.
+  4. Headline chart for the pitch: misfit (mm) for uniform vs. our scaling, women vs. men.
+- **Physical proof:** print fit-test rings for 2–3 people and show they fit. Print one hand from uniform scaling and one from ours for the same woman and film them side by side.
 - **Live demo:** a judge puts their arm on the marker sheet, takes two photos, and gets a fitted gauntlet in about a minute.
 - Don't use photos of real amputees from the internet; there's no consent. For true residual-limb cases, ask an e-NABLE chapter for consented example data or leave it as future work.
 
@@ -219,3 +279,15 @@ Many recipients are kids, and a device a kid helped design is one they'll be exc
 - [Transactions on Additive Manufacturing Meets Medicine](https://www.journals.infinite-science.de/index.php/ammm/article/download/2722/1496/9945)
 - [3D-printing and upper-limb prosthetic sockets: promises and pitfalls](https://doi.org/10.1109/tnsre.2021.3057984)
 - [Smartphone-based photogrammetry for residual limb reconstruction](https://doi.org/10.3390/s26041251)
+- [e-NABLE recommended hand designs](https://hub.e-nable.org/s/e-nable-devices/wiki/311/hand-designs-currently-recommended)
+- [Raptor Reloaded catalog entry (not recommended for function)](https://hub.e-nable.org/s/e-nable-devices/wiki/page/view?title=Raptor+Reloaded)
+- [The Paraglider (e-NABLE wiki)](https://hub.e-nable.org/s/e-nable-devices/wiki/The+Paraglider)
+- [ANSUR II (Penn State OPEN Design Lab)](https://www.openlab.psu.edu/ansur2/)
+- [ANSUR II hand size summary (secondary)](https://bodytype-calculator.com/average-hand-size/)
+- [Sex estimation from hand anthropometry (2024)](https://www.sciencedirect.com/science/article/pii/S2665910724000239)
+- [Hand morphology by sex, Turkish sample](https://pubmed.ncbi.nlm.nih.gov/24951406/)
+- [Gender differences in amputation outcome](https://pubmed.ncbi.nlm.nih.gov/17852206/)
+- [Gender differences in prosthesis outcomes among veterans (2024)](https://pmc.ncbi.nlm.nih.gov/articles/PMC11849583/)
+- [ISO 20685-1:2018](https://www.iso.org/standard/63260.html)
+- [HandAnthro preprint](https://arxiv.org/abs/2609.37855)
+- [Running pitch stats](docs/PITCH_STATS.md)
