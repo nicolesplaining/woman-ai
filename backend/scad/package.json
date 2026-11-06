@@ -1,0 +1,8 @@
+{
+  "name": "fitted-scad-runner",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "openscad-wasm-prebuilt": "1.2.0"
+  }
+}

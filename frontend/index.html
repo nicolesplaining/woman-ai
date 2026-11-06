@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fitted</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235B3DF5'/%3E%3Cpath d='M10 22V12a2 2 0 0 1 4 0v6m0-7a2 2 0 0 1 4 0v7m0-6a2 2 0 0 1 4 0v8a6 6 0 0 1-6 6h-1a7 7 0 0 1-5-2' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+        "marked": "https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.esm.js",
+        "dompurify": "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.es.mjs"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <span class="brand-name">Fitted</span>
+      <span class="brand-tag">custom-fit e-NABLE hands for kids</span>
+    </div>
+    <nav class="topnav">
+      <div class="menu">
+        <button class="ghost" id="sheetBtn" aria-haspopup="true">Marker sheet ▾</button>
+        <div class="menu-pop" id="sheetMenu" hidden>
+          <a href="/api/marker-sheet?paper=letter">US Letter (PDF)</a>
+          <a href="/api/marker-sheet?paper=a4">A4 (PDF)</a>
+        </div>
+      </div>
+      <span class="pill" id="aiPill">Claude Opus 5.5</span>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <!-- ======================= INPUTS ======================= -->
+    <section class="col-inputs" aria-label="Inputs">
+      <div class="intro">
+        <h1>Photos in.<br />A hand that fits, out.</h1>
+        <p>Measure the arm, size the hand, fit the gauntlet, print.</p>
+        <button class="btn secondary" id="sampleBtn"><span class="spark">✦</span> Try it with sample data</button>
+        <span class="hint">Synthetic arm, no real patient data.</span>
+      </div>
+
+      <form id="form" autocomplete="off">
+        <div class="card">
+          <div class="card-h"><span class="num">1</span><h2>Who it's for</h2></div>
+          <div class="grid2">
+            <label>First name <span class="opt">optional</span><input name="name" placeholder="Maya" /></label>
+            <label>Age<input name="age" type="number" min="3" max="99" placeholder="9" /></label>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <span class="lbl">Affected side</span>
+              <div class="seg" data-name="side">
+                <button type="button" data-v="left" class="on">Left</button>
+                <button type="button" data-v="right">Right</button>
+              </div>
+            </div>
+            <label>Sex <span class="opt">for sizing reference</span>
+              <select name="sex">
+                <option value="">Prefer not to say</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </select>
+            </label>
+          </div>
+          <label>Language for the family summary
+            <select name="language">
+              <option>English</option><option>Spanish</option><option>French</option><option>Portuguese</option>
+              <option>Arabic</option><option>Hindi</option><option>Swahili</option><option>Chinese</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="num">2</span><h2>The arm</h2></div>
+          <div class="tabs" role="tablist" id="modeTabs">
+            <button type="button" role="tab" data-mode="photo" class="on">Photos <span class="sub">any phone</span></button>
+            <button type="button" role="tab" data-mode="lidar">LiDAR scan <span class="sub">iPhone Pro</span></button>
+          </div>
+
+          <div data-pane="photo">
+            <p class="help">Print the <a href="/api/marker-sheet?paper=letter">marker sheet</a> at 100%. Lay the arm along the sheet with the wrist near the top. Shoot from about 1 m with 2× zoom.</p>
+            <div class="drops three">
+              <label class="drop" data-key="top">
+                <input type="file" accept="image/*" name="top" hidden />
+                <svg viewBox="0 0 64 64" class="illus"><rect x="10" y="6" width="44" height="52" rx="3" class="sheet"/><path d="M26 6c0 6-3 8-3 13v39h18V19c0-5-3-7-3-13" class="arm"/></svg>
+                <span class="drop-t">A · From above</span><span class="drop-s">Palm down</span><span class="badge req">Required</span>
+              </label>
+              <label class="drop" data-key="side">
+                <input type="file" accept="image/*" name="side" hidden />
+                <svg viewBox="0 0 64 64" class="illus"><rect x="10" y="6" width="44" height="52" rx="3" class="sheet"/><path d="M29 6c0 5-2 8-2 13v39h10V19c0-5-2-8-2-13" class="arm"/></svg>
+                <span class="drop-t">B · From the side</span><span class="drop-s">Thumb up</span><span class="badge">Recommended</span>
+              </label>
+              <label class="drop" data-key="sound">
+                <input type="file" accept="image/*" name="sound" hidden />
+                <svg viewBox="0 0 64 64" class="illus"><rect x="10" y="6" width="44" height="52" rx="3" class="sheet"/><path d="M24 50V20c0-5 4-9 8-9s8 4 8 9v30" class="arm"/></svg>
+                <span class="drop-t">C · Other hand</span><span class="drop-s">Fingers together</span><span class="badge">Recommended</span>
+              </label>
+            </div>
+          </div>
+
+          <div data-pane="lidar" hidden>
+            <p class="help">Scan the arm with Polycam, Scaniverse or 3d Scanner App, crop it to hand-to-elbow, and export OBJ, STL, PLY or GLB.</p>
+            <div class="drops two">
+              <label class="drop" data-key="scan">
+                <input type="file" accept=".obj,.stl,.ply,.glb,.gltf" name="scan" hidden />
+                <svg viewBox="0 0 64 64" class="illus"><path d="M32 8l20 11v26L32 56 12 45V19z" class="sheet"/><path d="M12 19l20 11 20-11M32 30v26" class="arm-line"/></svg>
+                <span class="drop-t">Arm scan</span><span class="drop-s">Affected side</span><span class="badge req">Required</span>
+              </label>
+              <label class="drop" data-key="sound">
+                <input type="file" accept="image/*" name="sound2" hidden />
+                <svg viewBox="0 0 64 64" class="illus"><rect x="10" y="6" width="44" height="52" rx="3" class="sheet"/><path d="M24 50V20c0-5 4-9 8-9s8 4 8 9v30" class="arm"/></svg>
+                <span class="drop-t">C · Other hand</span><span class="drop-s">Photo on the sheet</span><span class="badge">Optional</span>
+              </label>
+            </div>
+          </div>
+
+          <details class="more">
+            <summary>Add tape measurements <span class="opt">improves accuracy</span></summary>
+            <div class="grid2">
+              <label>Wrist circumference<span class="unit"><input name="wrist_circ" type="number" step="0.5" placeholder="154" />mm</span></label>
+              <label>Widest forearm circumference<span class="unit"><input name="forearm_circ" type="number" step="0.5" placeholder="245" />mm</span></label>
+              <label>Other hand length<span class="unit"><input name="sound_length" type="number" step="0.5" placeholder="180" />mm</span></label>
+              <label>Other hand breadth (knuckles)<span class="unit"><input name="sound_breadth" type="number" step="0.5" placeholder="78" />mm</span></label>
+            </div>
+          </details>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="num">3</span><h2>Make it theirs</h2></div>
+          <label>Describe the look <span class="opt">optional</span>
+            <textarea name="design" rows="2" placeholder="Purple and teal with stars, and my name on it"></textarea>
+          </label>
+          <div class="chips" id="chips">
+            <button type="button">Purple and teal with stars</button>
+            <button type="button">Green dragon scales</button>
+            <button type="button">Red and blue, like a superhero</button>
+            <button type="button">Pink with hearts and my name</button>
+            <button type="button">Ice blue snowflakes</button>
+          </div>
+          <div class="refs">
+            <label class="ref-add">
+              <input type="file" accept="image/*" multiple id="refsInput" hidden />
+              <span>＋ Reference images</span><span class="opt">a toy, a drawing, a color</span>
+            </label>
+            <div class="ref-list" id="refList"></div>
+          </div>
+        </div>
+
+        <details class="card more plain">
+          <summary>Printer</summary>
+          <div class="grid3">
+            <label>Bed X<span class="unit"><input name="bed_x" type="number" value="220" />mm</span></label>
+            <label>Bed Y<span class="unit"><input name="bed_y" type="number" value="220" />mm</span></label>
+            <label>Bed Z<span class="unit"><input name="bed_z" type="number" value="250" />mm</span></label>
+          </div>
+        </details>
+
+        <button class="btn primary big" id="goBtn" type="submit">Generate print kit</button>
+        <p class="fine">Not a medical device. A volunteer reviews the fit before anything is printed.</p>
+      </form>
+    </section>
+
+    <!-- ======================= OUTPUT ======================= -->
+    <section class="col-output" aria-label="Results" id="output">
+      <div id="emptyState" class="empty">
+        <div class="how">
+          <div class="how-step"><span class="hs-n">01</span><b>Measure</b><p>Photos on a marker sheet</p></div>
+          <div class="how-step"><span class="hs-n">02</span><b>Size</b><p>Width and length, separately</p></div>
+          <div class="how-step"><span class="hs-n">03</span><b>Fit</b><p>Gauntlet shaped to the arm</p></div>
+          <div class="how-step"><span class="hs-n">04</span><b>Print</b><p>Open it in your slicer</p></div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-viewer" id="heroViewer"></div>
+          <div class="hero-cap"><b>Maya, 10</b><span>Purple and teal with stars · sized from three phone photos</span></div>
+          <span class="hero-hint">drag to spin</span>
+        </div>
+      </div>
+
+      <div id="runState" hidden>
+        <div class="card run-card">
+          <div class="run-h"><h2 id="runTitle">Building the kit…</h2><span class="timer" id="timer">0s</span></div>
+          <ol class="steps" id="steps"></ol>
+        </div>
+      </div>
+
+      <div id="errorState" hidden>
+        <div class="card error-card">
+          <h2>We need another photo</h2>
+          <p id="errMsg"></p>
+          <div class="retake" id="errRetake"></div>
+          <button class="btn secondary" id="errBack">Back to the form</button>
+        </div>
+      </div>
+
+      <div id="doneState" hidden>
+        <div class="warnings" id="warnings"></div>
+        <div class="viewer-card">
+          <div class="viewer" id="viewer"></div>
+          <div class="viewer-bar">
+            <div class="seg small" id="viewSeg">
+              <button type="button" data-v="arm" class="on">On the arm</button>
+              <button type="button" data-v="plates">Print plates</button>
+            </div>
+            <div class="seg small" id="plateSeg" hidden></div>
+            <span class="grid-note" id="gridNote">grid: 10 mm</span>
+            <label class="toggle" id="ringToggle"><input type="checkbox" /> Fit ring</label>
+            <div class="menu export">
+              <button type="button" class="btn primary small" id="exportBtn">Export ▾</button>
+              <div class="menu-pop up" id="exportMenu" hidden>
+                <a data-app="bambustudio" href="#">Open in Bambu Studio</a>
+                <a data-app="prusaslicer" href="#">Open in PrusaSlicer</a>
+                <a data-app="orcaslicer" href="#">Open in OrcaSlicer</a>
+                <div class="menu-sep"></div>
+                <a data-dl="kit.3mf" href="#">Download whole kit (.3mf)</a>
+                <a data-dl="fit_ring.3mf" href="#">Download fit-test ring (.3mf)</a>
+                <a data-dl="fitted_package.zip" href="#">Download everything (.zip)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tiles" id="tiles"></div>
+        <div class="tabs results-tabs" role="tablist" id="resTabs">
+          <button data-tab="fit" class="on">Fit</button>
+          <button data-tab="sizing">Sizing</button>
+          <button data-tab="look">Look</button>
+          <button data-tab="print">Print</button>
+          <button data-tab="guide">Build guide</button>
+          <button data-tab="files">Files</button>
+        </div>
+        <div class="tab-panels">
+          <div data-panel="fit" id="pFit"></div>
+          <div data-panel="sizing" id="pSizing" hidden></div>
+          <div data-panel="look" id="pLook" hidden></div>
+          <div data-panel="print" id="pPrint" hidden></div>
+          <div data-panel="guide" id="pGuide" hidden></div>
+          <div data-panel="files" id="pFiles" hidden></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

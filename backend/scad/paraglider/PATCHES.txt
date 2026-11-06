@@ -1,0 +1,12 @@
+Local changes to the upstream Paraglider (flexible_flyer) files, see UPSTREAM_COMMIT.txt:
+
+paraglider_palm_left.scad
+  - Fixed a doubled comma in pin_coordinates that newer OpenSCAD parsers reject.
+  - Added width_ratio: the palm is scaled by overall_scale*width_ratio across the hand (x)
+    and overall_scale along its length (y) and thickness (z).
+
+fingerator.scad
+  - Added width_ratio with the same meaning; all finger scaling and tab clearance use it.
+
+All pin and screw holes run along x, so their cross-sections are scaled only by the
+length scale and stay round at the intended diameter.
