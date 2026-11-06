@@ -213,6 +213,7 @@ def segment_arm(rect: Rectified) -> np.ndarray:
     mask[sure_bg] = cv2.GC_BGD
     mask[sure_fg] = cv2.GC_FGD
     bgd, fgd = np.zeros((1, 65)), np.zeros((1, 65))
+    cv2.setRNGSeed(12345)  # GrabCut's k-means init is random; keep measurements repeatable
     try:
         cv2.grabCut(cv2.cvtColor(img, cv2.COLOR_RGB2BGR), mask, None, bgd, fgd, 4, cv2.GC_INIT_WITH_MASK)
     except cv2.error:

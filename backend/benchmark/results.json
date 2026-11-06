@@ -1,0 +1,1489 @@
+{
+ "generated": "2026-11-06 12:13",
+ "note": "Synthetic subjects with ANSUR II proportions; renders are cleaner than real photos, so treat these as best-case.",
+ "n_subjects": 80,
+ "photo": {
+  "full": {
+   "n": 80,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.32161098936107707,
+    "bias": 0.2133085849309456,
+    "p95": 0.7305033463826763,
+    "within_2mm_pct": 98.75
+   },
+   "width_40": {
+    "mae": 0.21893938426252185,
+    "bias": 0.0585211452256571,
+    "p95": 0.532560060498583,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.26465010936905975,
+    "bias": -0.13989777312853136,
+    "p95": 0.709186143384386,
+    "within_2mm_pct": 98.75
+   },
+   "depth_0": {
+    "mae": 0.46986553577361045,
+    "bias": -0.19595887860345423,
+    "p95": 1.1692129069511568,
+    "within_2mm_pct": 96.25
+   },
+   "depth_40": {
+    "mae": 0.46603484486188174,
+    "bias": -0.28006971742778386,
+    "p95": 1.0800316843921973,
+    "within_2mm_pct": 97.5
+   },
+   "depth_80": {
+    "mae": 0.5811692797218722,
+    "bias": -0.5032079580438032,
+    "p95": 1.2386836498259386,
+    "within_2mm_pct": 96.25
+   },
+   "circ_0": {
+    "mae": 0.9251542992090018,
+    "bias": 0.09486546858528247,
+    "p95": 2.323203821860415,
+    "within_2mm_pct": 93.75
+   },
+   "circ_40": {
+    "mae": 0.8691123540139207,
+    "bias": -0.3105526908761801,
+    "p95": 2.1762411442306187,
+    "within_2mm_pct": 90.0
+   },
+   "circ_80": {
+    "mae": 1.241327829489041,
+    "bias": -0.9923521580903014,
+    "p95": 2.7576075600964427,
+    "within_2mm_pct": 80.0
+   },
+   "sound_length": {
+    "mae": 2.1152083072764842,
+    "bias": 0.24342252056631075,
+    "p95": 5.854621753413029,
+    "within_2mm_pct": 68.75
+   },
+   "sound_breadth": {
+    "mae": 1.7759792733521125,
+    "bias": 1.7759792733521125,
+    "p95": 2.4000000000000066,
+    "within_2mm_pct": 70.0
+   },
+   "surface_mae": 0.1948853831846258,
+   "surface_p95": 0.3710127196514204,
+   "surface_within_2mm": 99.81481481481481,
+   "all_dims_mae": 0.7766822154973274,
+   "all_dims_within_2mm_pct": 90.78125
+  },
+  "no_side": {
+   "n": 80,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.29471505827089084,
+    "bias": 0.16652215428387124,
+    "p95": 0.7220125063454252,
+    "within_2mm_pct": 98.75
+   },
+   "width_40": {
+    "mae": 0.22612456191694444,
+    "bias": 0.003347929726945065,
+    "p95": 0.6388104274865981,
+    "within_2mm_pct": 98.75
+   },
+   "width_80": {
+    "mae": 0.33199588592831775,
+    "bias": -0.24371659881660027,
+    "p95": 0.8269372083009437,
+    "within_2mm_pct": 98.75
+   },
+   "depth_0": {
+    "mae": 0.964080834273209,
+    "bias": 0.9451464773165579,
+    "p95": 1.618396792655388,
+    "within_2mm_pct": 100.0
+   },
+   "depth_40": {
+    "mae": 0.9709908788283089,
+    "bias": 0.9544864051289235,
+    "p95": 2.1030814488724947,
+    "within_2mm_pct": 92.5
+   },
+   "depth_80": {
+    "mae": 1.6704700596245936,
+    "bias": 1.6525364965004647,
+    "p95": 3.215807102374844,
+    "within_2mm_pct": 62.5
+   },
+   "circ_0": {
+    "mae": 1.8576299454596608,
+    "bias": 1.67571902826016,
+    "p95": 3.4513215239486765,
+    "within_2mm_pct": 63.74999999999999
+   },
+   "circ_40": {
+    "mae": 1.5195993609671266,
+    "bias": 1.4332384383039145,
+    "p95": 3.119622829944335,
+    "within_2mm_pct": 60.0
+   },
+   "circ_80": {
+    "mae": 2.205511845796439,
+    "bias": 2.096217329024875,
+    "p95": 4.564539589723459,
+    "within_2mm_pct": 50.0
+   },
+   "sound_length": {
+    "mae": 2.1152083072764842,
+    "bias": 0.24342252056631075,
+    "p95": 5.854621753413029,
+    "within_2mm_pct": 68.75
+   },
+   "sound_breadth": {
+    "mae": 1.7759792733521125,
+    "bias": 1.7759792733521125,
+    "p95": 2.4000000000000066,
+    "within_2mm_pct": 70.0
+   },
+   "surface_mae": 0.40121099380471853,
+   "surface_p95": 0.8281310936452144,
+   "surface_within_2mm": 99.9170524691358,
+   "all_dims_mae": 1.0436956074338577,
+   "all_dims_within_2mm_pct": 86.25
+  },
+  "no_perspective": {
+   "n": 80,
+   "failures": 0,
+   "width_0": {
+    "mae": 1.5048532988172478,
+    "bias": 1.477847765655498,
+    "p95": 2.521829365778807,
+    "within_2mm_pct": 77.5
+   },
+   "width_40": {
+    "mae": 1.6514968786168063,
+    "bias": 1.6514968786168063,
+    "p95": 2.582689869687602,
+    "within_2mm_pct": 70.0
+   },
+   "width_80": {
+    "mae": 1.9302260672829672,
+    "bias": 1.9302260672829672,
+    "p95": 3.152420631837403,
+    "within_2mm_pct": 50.0
+   },
+   "depth_0": {
+    "mae": 1.3616132427668468,
+    "bias": 1.0857964773165563,
+    "p95": 2.3367006225681872,
+    "within_2mm_pct": 87.5
+   },
+   "depth_40": {
+    "mae": 1.412645454005735,
+    "bias": 1.332776405128918,
+    "p95": 2.388593151138768,
+    "within_2mm_pct": 85.0
+   },
+   "depth_80": {
+    "mae": 1.6429182390122512,
+    "bias": 1.591671496500465,
+    "p95": 2.5674085689080166,
+    "within_2mm_pct": 75.0
+   },
+   "circ_0": {
+    "mae": 4.512700102354143,
+    "bias": 4.160916470443047,
+    "p95": 7.410588461311027,
+    "within_2mm_pct": 3.75
+   },
+   "circ_40": {
+    "mae": 4.855827818069008,
+    "bias": 4.824754338560087,
+    "p95": 7.82511097177623,
+    "within_2mm_pct": 2.5
+   },
+   "circ_80": {
+    "mae": 5.698671212590756,
+    "bias": 5.692071741340061,
+    "p95": 9.163764280739125,
+    "within_2mm_pct": 1.25
+   },
+   "sound_length": {
+    "mae": 2.1152083072764842,
+    "bias": 0.24342252056631075,
+    "p95": 5.854621753413029,
+    "within_2mm_pct": 68.75
+   },
+   "sound_breadth": {
+    "mae": 1.7759792733521125,
+    "bias": 1.7759792733521125,
+    "p95": 2.4000000000000066,
+    "within_2mm_pct": 70.0
+   },
+   "surface_mae": 0.8283326887280975,
+   "surface_p95": 1.0232063007374053,
+   "surface_within_2mm": 99.97608024691358,
+   "all_dims_mae": 1.674367595141306,
+   "all_dims_within_2mm_pct": 72.96875
+  },
+  "tape": {
+   "n": 80,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.6175393386789554,
+    "bias": 0.2719216549940291,
+    "p95": 1.4406897173993838,
+    "within_2mm_pct": 96.25
+   },
+   "width_40": {
+    "mae": 0.6520443298416957,
+    "bias": 0.12031096532569148,
+    "p95": 1.5612085661738215,
+    "within_2mm_pct": 97.5
+   },
+   "width_80": {
+    "mae": 0.7342219556718727,
+    "bias": -0.07427972333817454,
+    "p95": 1.7071518935531134,
+    "within_2mm_pct": 96.25
+   },
+   "depth_0": {
+    "mae": 0.48537679578183546,
+    "bias": -0.17178293091022737,
+    "p95": 1.073521047049968,
+    "within_2mm_pct": 96.25
+   },
+   "depth_40": {
+    "mae": 0.5099693598354786,
+    "bias": -0.24396078352524553,
+    "p95": 1.5056051342627907,
+    "within_2mm_pct": 97.5
+   },
+   "depth_80": {
+    "mae": 0.6517711857563998,
+    "bias": -0.46177986466135035,
+    "p95": 1.7598111043774711,
+    "within_2mm_pct": 97.5
+   },
+   "circ_0": {
+    "mae": 1.338738950356764,
+    "bias": 0.2324850051244713,
+    "p95": 3.02285445672006,
+    "within_2mm_pct": 76.25
+   },
+   "circ_40": {
+    "mae": 1.6918860962322513,
+    "bias": -0.15061731481981971,
+    "p95": 3.5581775758604004,
+    "within_2mm_pct": 68.75
+   },
+   "circ_80": {
+    "mae": 2.0643659484296535,
+    "bias": -0.8181006266772932,
+    "p95": 4.903458779422809,
+    "within_2mm_pct": 56.25
+   },
+   "sound_length": {
+    "mae": 2.1152083072764842,
+    "bias": 0.24342252056631075,
+    "p95": 5.854621753413029,
+    "within_2mm_pct": 68.75
+   },
+   "sound_breadth": {
+    "mae": 1.7759792733521125,
+    "bias": 1.7759792733521125,
+    "p95": 2.4000000000000066,
+    "within_2mm_pct": 70.0
+   },
+   "surface_mae": 0.30194129526698243,
+   "surface_p95": 0.5045107421469819,
+   "surface_within_2mm": 99.44367283950616,
+   "all_dims_mae": 0.9427638182743543,
+   "all_dims_within_2mm_pct": 90.0
+  }
+ },
+ "photo_by_sex": {
+  "female": {
+   "n": 40,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.3737980069812677,
+    "bias": 0.17669333902749623,
+    "p95": 0.887383985440543,
+    "within_2mm_pct": 97.5
+   },
+   "width_40": {
+    "mae": 0.26157111711705133,
+    "bias": 0.09205736509362054,
+    "p95": 0.8260133251068515,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.25174993727315853,
+    "bias": -0.0882444323200641,
+    "p95": 0.9123792291898069,
+    "within_2mm_pct": 97.5
+   },
+   "depth_0": {
+    "mae": 0.5936491932676049,
+    "bias": -0.20422796385609035,
+    "p95": 1.5032135518585465,
+    "within_2mm_pct": 95.0
+   },
+   "depth_40": {
+    "mae": 0.5017298132059593,
+    "bias": -0.19009672335943587,
+    "p95": 1.7220929048529805,
+    "within_2mm_pct": 95.0
+   },
+   "depth_80": {
+    "mae": 0.5225627235283519,
+    "bias": -0.3850071866289184,
+    "p95": 1.31971222185004,
+    "within_2mm_pct": 95.0
+   },
+   "circ_0": {
+    "mae": 1.2921739941998343,
+    "bias": 0.023760980640161123,
+    "p95": 2.879310502576032,
+    "within_2mm_pct": 90.0
+   },
+   "circ_40": {
+    "mae": 0.9662465432866402,
+    "bias": -0.11808725352477331,
+    "p95": 4.396846209774725,
+    "within_2mm_pct": 90.0
+   },
+   "circ_80": {
+    "mae": 1.1545533923569287,
+    "bias": -0.7262035094403394,
+    "p95": 2.8746826120530997,
+    "within_2mm_pct": 90.0
+   },
+   "sound_length": {
+    "mae": 1.8262700233050428,
+    "bias": 0.5164552986986909,
+    "p95": 4.524999999999972,
+    "within_2mm_pct": 72.5
+   },
+   "sound_breadth": {
+    "mae": 1.62819169820876,
+    "bias": 1.62819169820876,
+    "p95": 2.200000000000003,
+    "within_2mm_pct": 82.5
+   },
+   "surface_mae": 0.19492301384909186,
+   "surface_p95": 0.3642370969996597,
+   "surface_within_2mm": 99.62962962962963,
+   "all_dims_mae": 0.7449403141108996,
+   "all_dims_within_2mm_pct": 91.875
+  },
+  "male": {
+   "n": 40,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.26942397174088645,
+    "bias": 0.24992383083439496,
+    "p95": 0.6964490309135729,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.17630765140799234,
+    "bias": 0.024984925357693654,
+    "p95": 0.36828260218052594,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.27755028146496097,
+    "bias": -0.1915511139369986,
+    "p95": 0.7007555921126887,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.3460818782796159,
+    "bias": -0.18768979335081815,
+    "p95": 1.0411343781056472,
+    "within_2mm_pct": 97.5
+   },
+   "depth_40": {
+    "mae": 0.43033987651780414,
+    "bias": -0.3700427114961318,
+    "p95": 1.000896863498572,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.6397758359153924,
+    "bias": -0.6214087294586881,
+    "p95": 1.2386836498259386,
+    "within_2mm_pct": 97.5
+   },
+   "circ_0": {
+    "mae": 0.5581346042181693,
+    "bias": 0.1659699565304038,
+    "p95": 1.2820300534932256,
+    "within_2mm_pct": 97.5
+   },
+   "circ_40": {
+    "mae": 0.7719781647412013,
+    "bias": -0.503018128227587,
+    "p95": 2.08674134335358,
+    "within_2mm_pct": 90.0
+   },
+   "circ_80": {
+    "mae": 1.3281022666211535,
+    "bias": -1.2585008067402632,
+    "p95": 2.579870040252492,
+    "within_2mm_pct": 70.0
+   },
+   "sound_length": {
+    "mae": 2.4041465912479256,
+    "bias": -0.029610257566069366,
+    "p95": 5.854621753413029,
+    "within_2mm_pct": 65.0
+   },
+   "sound_breadth": {
+    "mae": 1.9237668484954646,
+    "bias": 1.9237668484954646,
+    "p95": 2.474527334267894,
+    "within_2mm_pct": 57.49999999999999
+   },
+   "surface_mae": 0.19484775252015973,
+   "surface_p95": 0.37778834230318104,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.8084241168837554,
+   "all_dims_within_2mm_pct": 89.6875
+  }
+ },
+ "photo_by_child": {
+  "False": {
+   "n": 40,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.39357723077277973,
+    "bias": 0.21514527136559652,
+    "p95": 0.887383985440543,
+    "within_2mm_pct": 97.5
+   },
+   "width_40": {
+    "mae": 0.2504034804599282,
+    "bias": 0.010667357006454737,
+    "p95": 0.8260133251068515,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.3308734934172145,
+    "bias": -0.20317968040649906,
+    "p95": 0.9123792291898069,
+    "within_2mm_pct": 97.5
+   },
+   "depth_0": {
+    "mae": 0.6906024470140377,
+    "bias": -0.37165384263052453,
+    "p95": 2.293134181626358,
+    "within_2mm_pct": 92.5
+   },
+   "depth_40": {
+    "mae": 0.6098951574421333,
+    "bias": -0.3935727629964836,
+    "p95": 1.7789626309472253,
+    "within_2mm_pct": 95.0
+   },
+   "depth_80": {
+    "mae": 0.7658541668166811,
+    "bias": -0.6976613658449666,
+    "p95": 2.482337994506641,
+    "within_2mm_pct": 92.5
+   },
+   "circ_0": {
+    "mae": 1.2836978747248267,
+    "bias": -0.1519543750761585,
+    "p95": 2.879310502576032,
+    "within_2mm_pct": 90.0
+   },
+   "circ_40": {
+    "mae": 1.116177357646729,
+    "bias": -0.5586657401301572,
+    "p95": 4.396846209774725,
+    "within_2mm_pct": 87.5
+   },
+   "circ_80": {
+    "mae": 1.6631958279553536,
+    "bias": -1.3906938865935836,
+    "p95": 4.845432190349252,
+    "within_2mm_pct": 67.5
+   },
+   "sound_length": {
+    "mae": 2.7525,
+    "bias": -0.46750000000000613,
+    "p95": 8.995,
+    "within_2mm_pct": 55.00000000000001
+   },
+   "sound_breadth": {
+    "mae": 2.030000000000002,
+    "bias": 2.030000000000002,
+    "p95": 2.410000000000018,
+    "within_2mm_pct": 45.0
+   },
+   "surface_mae": 0.25298506352546896,
+   "surface_p95": 0.47144418600724336,
+   "surface_within_2mm": 99.62962962962963,
+   "all_dims_mae": 0.977963246990347,
+   "all_dims_within_2mm_pct": 84.375
+  },
+  "True": {
+   "n": 40,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.2496447479493744,
+    "bias": 0.21147189849629466,
+    "p95": 0.7070463682026773,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.18747528806511546,
+    "bias": 0.10637493344485946,
+    "p95": 0.5138276143048159,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.19842672532090494,
+    "bias": -0.07661586585056365,
+    "p95": 0.5597373455521092,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.24912862453318319,
+    "bias": -0.02026391457638397,
+    "p95": 0.7424446153020331,
+    "within_2mm_pct": 100.0
+   },
+   "depth_40": {
+    "mae": 0.3221745322816301,
+    "bias": -0.16656667185908408,
+    "p95": 0.8732556553207313,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.3964843926270632,
+    "bias": -0.30875455024263976,
+    "p95": 0.9512377711313696,
+    "within_2mm_pct": 100.0
+   },
+   "circ_0": {
+    "mae": 0.5666107236931769,
+    "bias": 0.34168531224672344,
+    "p95": 1.4171149731653376,
+    "within_2mm_pct": 97.5
+   },
+   "circ_40": {
+    "mae": 0.6220473503811125,
+    "bias": -0.062439641622203015,
+    "p95": 2.078552314307706,
+    "within_2mm_pct": 92.5
+   },
+   "circ_80": {
+    "mae": 0.8194598310227285,
+    "bias": -0.5940104295870192,
+    "p95": 2.019394347354484,
+    "within_2mm_pct": 92.5
+   },
+   "sound_length": {
+    "mae": 1.4779166145529685,
+    "bias": 0.9543450411326276,
+    "p95": 2.98267079168843,
+    "within_2mm_pct": 82.5
+   },
+   "sound_breadth": {
+    "mae": 1.5219585467042231,
+    "bias": 1.5219585467042231,
+    "p95": 1.9658001500519198,
+    "within_2mm_pct": 95.0
+   },
+   "surface_mae": 0.13678570284378264,
+   "surface_p95": 0.27058125329559746,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.5754011840043078,
+   "all_dims_within_2mm_pct": 97.1875
+  }
+ },
+ "photo_by_skin": {
+  "I": {
+   "n": 14,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.547201087617841,
+    "bias": 0.06632898579800692,
+    "p95": 1.7747822033277807,
+    "within_2mm_pct": 92.85714285714286
+   },
+   "width_40": {
+    "mae": 0.31702225709543896,
+    "bias": 0.005928211562164165,
+    "p95": 1.2105971556320911,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.3450455147949053,
+    "bias": -0.27529582437510974,
+    "p95": 1.206095034190228,
+    "within_2mm_pct": 92.85714285714286
+   },
+   "depth_0": {
+    "mae": 1.1439183940020985,
+    "bias": -1.0537313259754295,
+    "p95": 6.1454706362813925,
+    "within_2mm_pct": 85.71428571428571
+   },
+   "depth_40": {
+    "mae": 0.8540420964158822,
+    "bias": -0.8181184136300571,
+    "p95": 3.4855030137097263,
+    "within_2mm_pct": 85.71428571428571
+   },
+   "depth_80": {
+    "mae": 0.9985892894432844,
+    "bias": -0.9985892894432844,
+    "p95": 3.6198839079711957,
+    "within_2mm_pct": 85.71428571428571
+   },
+   "circ_0": {
+    "mae": 2.092721014909224,
+    "bias": -1.3863714559219054,
+    "p95": 9.377409044080295,
+    "within_2mm_pct": 85.71428571428571
+   },
+   "circ_40": {
+    "mae": 1.3681518987842196,
+    "bias": -1.1935039435146848,
+    "p95": 5.983668816083522,
+    "within_2mm_pct": 85.71428571428571
+   },
+   "circ_80": {
+    "mae": 1.966547720576082,
+    "bias": -1.966547720576082,
+    "p95": 6.803123153419575,
+    "within_2mm_pct": 71.42857142857143
+   },
+   "sound_length": {
+    "mae": 2.9360388742666776,
+    "bias": -0.47824684001904977,
+    "p95": 8.205000000000013,
+    "within_2mm_pct": 57.14285714285714
+   },
+   "sound_breadth": {
+    "mae": 1.9262288750201588,
+    "bias": 1.9262288750201588,
+    "p95": 2.4000000000000106,
+    "within_2mm_pct": 57.14285714285714
+   },
+   "surface_mae": 0.3242171271801549,
+   "surface_p95": 0.5823882792894066,
+   "surface_within_2mm": 98.94179894179895,
+   "all_dims_mae": 1.1335107985820359,
+   "all_dims_within_2mm_pct": 82.14285714285714
+  },
+  "II": {
+   "n": 12,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.11787897438832869,
+    "bias": 0.09832845256887938,
+    "p95": 0.2404689976277719,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.2027079542973779,
+    "bias": 0.04533522938064335,
+    "p95": 0.4003757847810337,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.22285048469075916,
+    "bias": -0.14821274093921785,
+    "p95": 0.48315347077021953,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.2034766530487818,
+    "bias": -0.12318794077232287,
+    "p95": 0.6518625752740936,
+    "within_2mm_pct": 100.0
+   },
+   "depth_40": {
+    "mae": 0.32743000739900197,
+    "bias": -0.310033185472399,
+    "p95": 0.8632362860060097,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.44063117808917224,
+    "bias": -0.44063117808917224,
+    "p95": 1.1106036607130823,
+    "within_2mm_pct": 100.0
+   },
+   "circ_0": {
+    "mae": 0.3586711147297142,
+    "bias": -0.004981182696676949,
+    "p95": 0.7986291998589162,
+    "within_2mm_pct": 100.0
+   },
+   "circ_40": {
+    "mae": 0.6801685891237893,
+    "bias": -0.3799726547449171,
+    "p95": 1.7193629913631108,
+    "within_2mm_pct": 91.66666666666666
+   },
+   "circ_80": {
+    "mae": 0.9631193542837716,
+    "bias": -0.9140723516798488,
+    "p95": 2.4932083235699434,
+    "within_2mm_pct": 83.33333333333334
+   },
+   "sound_length": {
+    "mae": 2.071119694543235,
+    "bias": 1.857914951546384,
+    "p95": 6.1265957807171745,
+    "within_2mm_pct": 66.66666666666666
+   },
+   "sound_breadth": {
+    "mae": 1.6711020478273966,
+    "bias": 1.6711020478273966,
+    "p95": 2.2838570544584704,
+    "within_2mm_pct": 83.33333333333334
+   },
+   "surface_mae": 0.14693206416969226,
+   "surface_p95": 0.28297045627922585,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.6571496242855067,
+   "all_dims_within_2mm_pct": 93.75
+  },
+  "III": {
+   "n": 12,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.2635601211234159,
+    "bias": 0.16698335147647056,
+    "p95": 0.6120973394059344,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.1874263314811285,
+    "bias": 0.09961091894435843,
+    "p95": 0.48745497032997454,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.21146186762260535,
+    "bias": -0.14709069147864065,
+    "p95": 0.40922977801333926,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.1800807175567168,
+    "bias": 0.07799595252601943,
+    "p95": 0.39709713407325886,
+    "within_2mm_pct": 100.0
+   },
+   "depth_40": {
+    "mae": 0.19868100544029232,
+    "bias": -0.1448957405532738,
+    "p95": 0.5225834185829252,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.42729470248622486,
+    "bias": -0.3214769123503635,
+    "p95": 0.7981919551753535,
+    "within_2mm_pct": 100.0
+   },
+   "circ_0": {
+    "mae": 0.5684405528120955,
+    "bias": 0.4076674736109389,
+    "p95": 1.2034122891946337,
+    "within_2mm_pct": 100.0
+   },
+   "circ_40": {
+    "mae": 0.3971447270371347,
+    "bias": -0.04099658565510348,
+    "p95": 1.0087967976693109,
+    "within_2mm_pct": 100.0
+   },
+   "circ_80": {
+    "mae": 0.8416933556510907,
+    "bias": -0.7304637259391242,
+    "p95": 1.8938384790176537,
+    "within_2mm_pct": 91.66666666666666
+   },
+   "sound_length": {
+    "mae": 1.6488984207114055,
+    "bias": 1.1652711625338235,
+    "p95": 3.337907575698722,
+    "within_2mm_pct": 75.0
+   },
+   "sound_breadth": {
+    "mae": 1.8574045600019222,
+    "bias": 1.8574045600019222,
+    "p95": 2.5273579303656204,
+    "within_2mm_pct": 58.333333333333336
+   },
+   "surface_mae": 0.12522915954400432,
+   "surface_p95": 0.26969856258042857,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.621850965802964,
+   "all_dims_within_2mm_pct": 91.66666666666666
+  },
+  "IV": {
+   "n": 12,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.3368236497147847,
+    "bias": 0.31082128764475137,
+    "p95": 0.6540268386946781,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.23662959552222418,
+    "bias": 0.05401357412763493,
+    "p95": 0.7792074747895256,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.3284516890093882,
+    "bias": -0.14933242948087452,
+    "p95": 0.936009509855441,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.3234820870286983,
+    "bias": 0.16641819536708713,
+    "p95": 0.9036357493602464,
+    "within_2mm_pct": 100.0
+   },
+   "depth_40": {
+    "mae": 0.4373224927357177,
+    "bias": 0.010285687314222377,
+    "p95": 1.134359101128469,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.4731621267645405,
+    "bias": -0.33864758928760175,
+    "p95": 0.830450338935374,
+    "within_2mm_pct": 100.0
+   },
+   "circ_0": {
+    "mae": 0.8540509584769858,
+    "bias": 0.7871631465971104,
+    "p95": 2.323392668841856,
+    "within_2mm_pct": 91.66666666666666
+   },
+   "circ_40": {
+    "mae": 0.8169057857407035,
+    "bias": 0.11110663739215217,
+    "p95": 2.5339892825075414,
+    "within_2mm_pct": 91.66666666666666
+   },
+   "circ_80": {
+    "mae": 1.22048818321408,
+    "bias": -0.7622545813270492,
+    "p95": 2.3436171809503996,
+    "within_2mm_pct": 75.0
+   },
+   "sound_length": {
+    "mae": 1.1274975034684782,
+    "bias": 0.9071866284292511,
+    "p95": 2.8101529372687533,
+    "within_2mm_pct": 83.33333333333334
+   },
+   "sound_breadth": {
+    "mae": 1.6446837855157714,
+    "bias": 1.6446837855157714,
+    "p95": 2.2349999999999994,
+    "within_2mm_pct": 83.33333333333334
+   },
+   "surface_mae": 0.1938528738965375,
+   "surface_p95": 0.36552016129266557,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.6135066162199504,
+   "all_dims_within_2mm_pct": 95.83333333333334
+  },
+  "V": {
+   "n": 13,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.3247723740165726,
+    "bias": 0.3192145894411186,
+    "p95": 0.6064916843485674,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.12532703080919833,
+    "bias": 0.010113063271392574,
+    "p95": 0.3789888383307157,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.20097799269169442,
+    "bias": -0.10029977050558231,
+    "p95": 0.6141339409027152,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.5076487471357161,
+    "bias": -0.19315124164765998,
+    "p95": 1.5733606817689518,
+    "within_2mm_pct": 92.3076923076923
+   },
+   "depth_40": {
+    "mae": 0.49331385668129274,
+    "bias": -0.2720325096652068,
+    "p95": 1.2848014320618066,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.6088626757622208,
+    "bias": -0.5227083169057701,
+    "p95": 1.7389519187375055,
+    "within_2mm_pct": 92.3076923076923
+   },
+   "circ_0": {
+    "mae": 0.9737854631893058,
+    "bias": 0.27949744546461375,
+    "p95": 2.343363111166209,
+    "within_2mm_pct": 84.61538461538461
+   },
+   "circ_40": {
+    "mae": 0.914268850824772,
+    "bias": -0.38185655672467517,
+    "p95": 2.5046254895769136,
+    "within_2mm_pct": 84.61538461538461
+   },
+   "circ_80": {
+    "mae": 1.1948815867145344,
+    "bias": -0.9535113743829654,
+    "p95": 3.3562844251695387,
+    "within_2mm_pct": 76.92307692307693
+   },
+   "sound_length": {
+    "mae": 2.0823072990689244,
+    "bias": -0.33738283012520315,
+    "p95": 6.519999999999982,
+    "within_2mm_pct": 69.23076923076923
+   },
+   "sound_breadth": {
+    "mae": 1.756475175778842,
+    "bias": 1.756475175778842,
+    "p95": 2.300000000000008,
+    "within_2mm_pct": 69.23076923076923
+   },
+   "surface_mae": 0.18364063472872402,
+   "surface_p95": 0.36149115436304247,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.7624606439930577,
+   "all_dims_within_2mm_pct": 90.38461538461539
+  },
+  "VI": {
+   "n": 17,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.3074629480766233,
+    "bias": 0.2983937782522232,
+    "p95": 0.5675987177889168,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.23096595091395625,
+    "bias": 0.12233589201308975,
+    "p95": 0.5510836367667735,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.2691464200900614,
+    "bias": -0.041067820569035636,
+    "p95": 0.5541795471199862,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.38179283185204604,
+    "bias": 0.007751760667638261,
+    "p95": 0.771270961672397,
+    "within_2mm_pct": 100.0
+   },
+   "depth_40": {
+    "mae": 0.4324656491394845,
+    "bias": -0.1223398890127538,
+    "p95": 0.8755155032344845,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.500295379562098,
+    "bias": -0.3689476655763303,
+    "p95": 1.1096758713541361,
+    "within_2mm_pct": 100.0
+   },
+   "circ_0": {
+    "mae": 0.628299246723793,
+    "bias": 0.5345163428560485,
+    "p95": 1.3811320631987938,
+    "within_2mm_pct": 100.0
+   },
+   "circ_40": {
+    "mae": 0.9269845561525304,
+    "bias": 0.03219567133096328,
+    "p95": 2.090370337839721,
+    "within_2mm_pct": 88.23529411764706
+   },
+   "circ_80": {
+    "mae": 1.1727933485871698,
+    "bias": -0.622315810872244,
+    "p95": 2.5684202257605646,
+    "within_2mm_pct": 82.35294117647058
+   },
+   "sound_length": {
+    "mae": 2.521878707635989,
+    "bias": -0.9770140419361356,
+    "p95": 7.1800000000000015,
+    "within_2mm_pct": 64.70588235294117
+   },
+   "sound_breadth": {
+    "mae": 1.776392683095338,
+    "bias": 1.776392683095338,
+    "p95": 2.2400000000000033,
+    "within_2mm_pct": 70.58823529411765
+   },
+   "surface_mae": 0.1807231442030395,
+   "surface_p95": 0.341760381971444,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.8025500712956996,
+   "all_dims_within_2mm_pct": 91.91176470588235
+  }
+ },
+ "photo_by_lens": {
+  "26.0": {
+   "n": 43,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.41908597416956594,
+    "bias": 0.25103321135850615,
+    "p95": 0.8757769084338577,
+    "within_2mm_pct": 97.67441860465115
+   },
+   "width_40": {
+    "mae": 0.28640846424915556,
+    "bias": 0.08137656566806534,
+    "p95": 0.7828015104275354,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.3082083269767671,
+    "bias": -0.137201608042988,
+    "p95": 0.8893539617758518,
+    "within_2mm_pct": 97.67441860465115
+   },
+   "depth_0": {
+    "mae": 0.6560281061624482,
+    "bias": -0.2619290612548737,
+    "p95": 1.3305702411144653,
+    "within_2mm_pct": 95.34883720930233
+   },
+   "depth_40": {
+    "mae": 0.5516703856904962,
+    "bias": -0.2787639244813048,
+    "p95": 1.594168575500931,
+    "within_2mm_pct": 95.34883720930233
+   },
+   "depth_80": {
+    "mae": 0.6433190352993932,
+    "bias": -0.5141694307677797,
+    "p95": 1.2784765171372747,
+    "within_2mm_pct": 95.34883720930233
+   },
+   "circ_0": {
+    "mae": 1.33076759411787,
+    "bias": 0.0689175731033262,
+    "p95": 2.768776230941777,
+    "within_2mm_pct": 90.69767441860465
+   },
+   "circ_40": {
+    "mae": 1.0184387594948614,
+    "bias": -0.2677707306063707,
+    "p95": 4.140962671586643,
+    "within_2mm_pct": 88.37209302325581
+   },
+   "circ_80": {
+    "mae": 1.3823792520574707,
+    "bias": -1.0033278022734675,
+    "p95": 2.8971086892588342,
+    "within_2mm_pct": 81.3953488372093
+   },
+   "sound_length": {
+    "mae": 2.339631853267781,
+    "bias": -0.400906768983835,
+    "p95": 6.783191561434383,
+    "within_2mm_pct": 62.7906976744186
+   },
+   "sound_breadth": {
+    "mae": 1.8610456259816437,
+    "bias": 1.8610456259816437,
+    "p95": 2.4000000000000057,
+    "within_2mm_pct": 62.7906976744186
+   },
+   "surface_mae": 0.22995716191380852,
+   "surface_p95": 0.4317712356484742,
+   "surface_within_2mm": 99.65546942291128,
+   "all_dims_mae": 0.8831747214746563,
+   "all_dims_within_2mm_pct": 88.37209302325581
+  },
+  "52.0": {
+   "n": 37,
+   "failures": 0,
+   "width_0": {
+    "mae": 0.20832925025931967,
+    "bias": 0.169466451515132,
+    "p95": 0.45794721580977005,
+    "within_2mm_pct": 100.0
+   },
+   "width_40": {
+    "mae": 0.14052937238616373,
+    "bias": 0.03195944038718266,
+    "p95": 0.37648690975650495,
+    "within_2mm_pct": 100.0
+   },
+   "width_80": {
+    "mae": 0.21402839701415657,
+    "bias": -0.14303115417389253,
+    "p95": 0.5853996190728361,
+    "within_2mm_pct": 100.0
+   },
+   "depth_0": {
+    "mae": 0.25351444045685306,
+    "bias": -0.11929082849504788,
+    "p95": 0.7026235763082771,
+    "within_2mm_pct": 97.2972972972973
+   },
+   "depth_40": {
+    "mae": 0.3665124595745729,
+    "bias": -0.28158726058179995,
+    "p95": 0.9441194757154773,
+    "within_2mm_pct": 100.0
+   },
+   "depth_80": {
+    "mae": 0.5089411854020504,
+    "bias": -0.4904689492024252,
+    "p95": 1.1500963294343134,
+    "within_2mm_pct": 97.2972972972973
+   },
+   "circ_0": {
+    "mae": 0.45376587539599283,
+    "bias": 0.12502113090215056,
+    "p95": 1.0738447106714935,
+    "within_2mm_pct": 97.2972972972973
+   },
+   "circ_40": {
+    "mae": 0.695570855752287,
+    "bias": -0.3602722663248775,
+    "p95": 2.07952493000314,
+    "within_2mm_pct": 91.8918918918919
+   },
+   "circ_80": {
+    "mae": 1.0774032032608662,
+    "bias": -0.9795966797152704,
+    "p95": 2.420885283645338,
+    "within_2mm_pct": 78.37837837837837
+   },
+   "sound_length": {
+    "mae": 1.8543917538271395,
+    "bias": 0.992237640854318,
+    "p95": 4.539999999999975,
+    "within_2mm_pct": 75.67567567567568
+   },
+   "sound_breadth": {
+    "mae": 1.6771183770529274,
+    "bias": 1.6771183770529274,
+    "p95": 2.4000000000000083,
+    "within_2mm_pct": 78.37837837837837
+   },
+   "surface_mae": 0.15412628898584588,
+   "surface_p95": 0.30040147133052,
+   "surface_within_2mm": 100.0,
+   "all_dims_mae": 0.6529206544966479,
+   "all_dims_within_2mm_pct": 93.58108108108108
+  }
+ },
+ "lidar": {
+  "n": 30,
+  "failures": 0,
+  "width_0": {
+   "mae": 0.0912107793690114,
+   "bias": -0.001693300861005061,
+   "p95": 0.21538448174387514,
+   "within_2mm_pct": 100.0
+  },
+  "width_40": {
+   "mae": 0.3982814888107612,
+   "bias": 0.397358809870389,
+   "p95": 0.7316211051548241,
+   "within_2mm_pct": 100.0
+  },
+  "width_80": {
+   "mae": 0.43603984121898803,
+   "bias": 0.43437553270382806,
+   "p95": 0.8328553236688062,
+   "within_2mm_pct": 100.0
+  },
+  "depth_0": {
+   "mae": 0.619835362078461,
+   "bias": 0.619835362078461,
+   "p95": 0.9527255029136191,
+   "within_2mm_pct": 100.0
+  },
+  "depth_40": {
+   "mae": 0.6642952170502622,
+   "bias": 0.6642952170502622,
+   "p95": 1.1154614688841975,
+   "within_2mm_pct": 100.0
+  },
+  "depth_80": {
+   "mae": 0.6388532236709966,
+   "bias": 0.6388532236709966,
+   "p95": 1.0109491873389762,
+   "within_2mm_pct": 100.0
+  },
+  "circ_0": {
+   "mae": 0.7479735168449935,
+   "bias": 0.7407617336772158,
+   "p95": 1.2466043427192899,
+   "within_2mm_pct": 100.0
+  },
+  "circ_40": {
+   "mae": 1.438463185288607,
+   "bias": 1.438463185288607,
+   "p95": 2.4216084402781406,
+   "within_2mm_pct": 80.0
+  },
+  "circ_80": {
+   "mae": 1.3106663733497328,
+   "bias": 1.3106663733497328,
+   "p95": 2.44574523445476,
+   "within_2mm_pct": 83.33333333333334
+  },
+  "surface_mae": 0.26840641070869237,
+  "surface_p95": 0.5671839990079586,
+  "surface_within_2mm": 100.0,
+  "all_dims_mae": 0.47475265203308004,
+  "all_dims_within_2mm_pct": 100.0
+ },
+ "sizing": {
+  "female": {
+   "n": 1986,
+   "uniform_length_mae": 10.381428060942714,
+   "uniform_length_within_3mm_pct": 15.609264853977844,
+   "fitted_length_mae": 2.396481050078496,
+   "fitted_length_within_3mm_pct": 74.97482376636455,
+   "fitted_breadth_mae": 1.7924051037576978,
+   "fitted_breadth_within_3mm_pct": 100.0
+  },
+  "male": {
+   "n": 4082,
+   "uniform_length_mae": 19.84720013908425,
+   "uniform_length_within_3mm_pct": 2.7437530622243997,
+   "fitted_length_mae": 4.648962308986796,
+   "fitted_length_within_3mm_pct": 52.44977951984321,
+   "fitted_breadth_mae": 1.7712696842301119,
+   "fitted_breadth_within_3mm_pct": 100.0
+  }
+ },
+ "references": {
+  "HandAnthro (2026 preprint, real people, single photo)": {
+   "overall_mae_mm": 3.8,
+   "palm_wrist_mae_mm": 6.17
+  },
+  "e-NABLE AI HandSizer (designer's tests)": {
+   "mae_mm": 12.0
+  },
+  "ISO 20685-1 (scan vs. trained measurer)": {
+   "max_mean_diff_mm": 1.0
+  },
+  "e-NABLE fit window": {
+   "mm": "2-3"
+  }
+ },
+ "claude_photo_check": {
+  "bad_caught_pct": 100.0,
+  "good_false_alarm_pct": 0.0,
+  "by_kind": {
+   "blurred": {
+    "n": 4,
+    "flagged": 4
+   },
+   "dark": {
+    "n": 4,
+    "flagged": 4
+   },
+   "forearm_off_sheet": {
+    "n": 4,
+    "flagged": 4
+   },
+   "good": {
+    "n": 4,
+    "flagged": 0
+   },
+   "markers_covered": {
+    "n": 4,
+    "flagged": 4
+   },
+   "swapped_views": {
+    "n": 4,
+    "flagged": 4
+   }
+  },
+  "rows": [
+   {
+    "kind": "good",
+    "subject": 0,
+    "caught": false,
+    "detail": "All three photos are usable. Each shows the expected view, all four markers were found, and the green outlines follow the skin edge. On the affected left side there is a residual palm with no fingers,"
+   },
+   {
+    "kind": "blurred",
+    "subject": 0,
+    "caught": true,
+    "detail": "Photo 'top': Found 0 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   },
+   {
+    "kind": "dark",
+    "subject": 0,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: The photo is very blurry (sharpness score 1 of a possible ~20+) and very dark, so we can't confirm the green outline is on the real skin edge.; The wrist appears to be at about 80 mm, but blur makes this an estima"
+   },
+   {
+    "kind": "swapped_views",
+    "subject": 0,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: This looks like the side view (thumb up), not the view from above. The end of the arm is only about 30 mm wide here, but the 'side' photo shows the palm about 80 mm wide.; The top and side photos appear to have be"
+   },
+   {
+    "kind": "forearm_off_sheet",
+    "subject": 0,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: The arm is placed too low on the sheet. Only about 20 mm of forearm shows below the wrist, so we can't measure forearm width for the gauntlet.; The outline follows the skin well, and the residual hand and wrist ar"
+   },
+   {
+    "kind": "markers_covered",
+    "subject": 0,
+    "caught": true,
+    "detail": "Photo 'top': Found 1 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   },
+   {
+    "kind": "good",
+    "subject": 1,
+    "caught": false,
+    "detail": "All three photos are usable. The marker sheets were found, the views match what we asked for, and the green outlines follow the skin edge. The affected left side appears to be a partial hand with all "
+   },
+   {
+    "kind": "blurred",
+    "subject": 1,
+    "caught": true,
+    "detail": "Photo 'top': Found 0 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   },
+   {
+    "kind": "dark",
+    "subject": 1,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: The photo is very dark and blurry (sharpness score 1 out of a typical 15+), so the skin edge can't be confirmed.; The green outline looks like the right shape, but we can't check it against the skin in this lighti"
+   },
+   {
+    "kind": "swapped_views",
+    "subject": 1,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: This looks like the side (thumb-up) view, not the palm-down view. The arm measures about 49 mm across at the 120 mm tick, narrower than the 'side' photo (about 63 mm) at the same spot. Seen from above, the arm sho"
+   },
+   {
+    "kind": "forearm_off_sheet",
+    "subject": 1,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: The arm is too low on the sheet: only about 20 mm of forearm shows past the wrist, so we can't measure the forearm width for the gauntlet. | retake: Slide the arm up the sheet so the end of the hand sits near the "
+   },
+   {
+    "kind": "markers_covered",
+    "subject": 1,
+    "caught": true,
+    "detail": "Photo 'top': Found 1 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   },
+   {
+    "kind": "good",
+    "subject": 2,
+    "caught": false,
+    "detail": "All three photos are clear, show the requested views, and have outlines that follow the skin, so no retakes are needed. The left hand looks like a partial hand with all fingers absent and a good amoun"
+   },
+   {
+    "kind": "blurred",
+    "subject": 2,
+    "caught": true,
+    "detail": "Photo 'top': Found 0 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   },
+   {
+    "kind": "dark",
+    "subject": 2,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: Photo is very dark and very blurry (sharpness 1 of 100), so the skin edge is hard to see.; The green outline covers only a thin strip along the right edge of the arm, not the whole arm, so no measurements can be t"
+   },
+   {
+    "kind": "swapped_views",
+    "subject": 2,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: This looks like the side view, not the top view. The end of the arm is only about 23 mm across here but about 63 mm across in the 'side' photo, which is what a palm looks like edge-on.; The top and side photos app"
+   },
+   {
+    "kind": "forearm_off_sheet",
+    "subject": 2,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: The arm is placed too low on the sheet. Only about 20 mm of forearm below the wrist is on the paper, and the rest runs off the bottom edge, so the gauntlet can't be sized from this view.; The wrist crease sits nea"
+   },
+   {
+    "kind": "markers_covered",
+    "subject": 2,
+    "caught": true,
+    "detail": "Photo 'top': Found 1 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   },
+   {
+    "kind": "good",
+    "subject": 3,
+    "caught": false,
+    "detail": "All three photos are clear, show the requested views, and have outlines that follow the skin edge, so no retakes are needed. Wrist crease is at about 73 mm on the affected top and side views and about"
+   },
+   {
+    "kind": "blurred",
+    "subject": 3,
+    "caught": true,
+    "detail": "Photo 'top': Found 1 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   },
+   {
+    "kind": "dark",
+    "subject": 3,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: Photo is very dark and blurry (sharpness score 1 of ~33 in the other photos), so the arm's edges can't be seen to check the green outline.; The outline's shape looks plausible, but we can't confirm it follows the "
+   },
+   {
+    "kind": "swapped_views",
+    "subject": 3,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: This looks like a side (edge-on) view, not palm-down: the hand end is only about 30 mm wide, narrower than the forearm. The 'side' photo appears to be the true top view, so the two may have been swapped.; The red "
+   },
+   {
+    "kind": "forearm_off_sheet",
+    "subject": 3,
+    "caught": true,
+    "detail": "Photo 'top' can't be used: The arm is placed too low on the sheet. The residual hand is near the bottom edge, so only about 20 mm of forearm is on the paper. We can't measure forearm width for the gauntlet.; The wrist crease sits far below "
+   },
+   {
+    "kind": "markers_covered",
+    "subject": 3,
+    "caught": true,
+    "detail": "Photo 'top': Found 1 of the 4 corner markers. | retake: Make sure all four black corner squares on the printed sheet are in the photo, not covered, and in focus."
+   }
+  ]
+ }
+}
