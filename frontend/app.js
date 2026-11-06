@@ -134,10 +134,10 @@ function loadSample() {
   state.sample = "partial_hand";
   state.files = {};
   const f = $("#form");
-  f.name.value = "Maya";
+  f.name.value = "Zoe";
   f.age.value = 10;
   f.sex.value = "female";
-  if (!f.design.value) f.design.value = "Purple and teal with stars, and my name on it";
+  f.design.value = "Pink with hearts and my name on it";
   const base = "/api/samples/partial_hand/";
   if (state.mode === "photo") {
     paintDrop($(".drop[data-key=top]"), "Sample · from above", base + "A_top.jpg");
