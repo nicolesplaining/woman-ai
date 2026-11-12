@@ -191,9 +191,9 @@ The full deck is in [`docs/pitch/Fitted-pitch-deck.pdf`](docs/pitch/Fitted-pitch
 
 ## Team
 
-- **Nicole Ma**
-- **Danica Sun**
-- **Shriya Sreeju**
+- **Nicole Ma** ([@nicolesplaining](https://github.com/nicolesplaining))
+- **Danica Sun** ([@danicasun](https://github.com/danicasun))
+- **Shriya Sreeju** ([@sreejushriya-debug](https://github.com/sreejushriya-debug))
 
 ## Credits and licenses
 
