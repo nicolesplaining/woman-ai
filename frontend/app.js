@@ -13,21 +13,14 @@ const state = { mode: "photo", side: "left", files: {}, refs: [], sample: null, 
 async function init() {
   try {
     state.meta = await (await fetch("/api/meta")).json();
-    if (!state.meta.ai_available) {
-      $("#aiPill").textContent = "Claude offline";
-      $("#aiPill").classList.add("off");
-    }
-    const demo = await (await fetch("demo/demo.json")).json();
-    state.hero = new Viewer($("#heroViewer"));
-    state.hero.showDemo(demo);
+    $("#aiNote").hidden = !!state.meta.ai_available;
   } catch (e) {
     console.error(e);
   }
 
-  $("#sheetBtn").onclick = (e) => { e.stopPropagation(); $("#sheetMenu").hidden = !$("#sheetMenu").hidden; };
   $("#exportBtn").onclick = (e) => { e.stopPropagation(); $("#exportMenu").hidden = !$("#exportMenu").hidden; };
   $$("#exportMenu a").forEach((a) => (a.onclick = (e) => { e.preventDefault(); exportTo(a.dataset.app, a.dataset.dl); }));
-  document.addEventListener("click", () => { $("#sheetMenu").hidden = true; $("#exportMenu").hidden = true; });
+  document.addEventListener("click", () => { $("#exportMenu").hidden = true; });
 
   $$(".seg[data-name=side] button").forEach((b) =>
     (b.onclick = () => { $$(".seg[data-name=side] button").forEach((x) => x.classList.toggle("on", x === b)); state.side = b.dataset.v; })
@@ -40,7 +33,6 @@ async function init() {
     })
   );
   $$(".drop").forEach(setupDrop);
-  $$("#chips button").forEach((b) => (b.onclick = () => { $("textarea[name=design]").value = b.textContent; }));
   $("#refsInput").onchange = (e) => {
     for (const f of e.target.files) if (state.refs.length < 4) state.refs.push(f);
     e.target.value = "";
@@ -95,7 +87,7 @@ function paintDrop(drop, label, url) {
   const t = document.createElement("div");
   t.className = "thumb";
   if (url) t.style.backgroundImage = `url(${url})`;
-  else t.style.background = "var(--teal-soft)";
+  else t.style.background = "var(--accent-soft)";
   const l = document.createElement("div");
   l.className = "thumb-label";
   l.textContent = label;
@@ -140,12 +132,12 @@ function loadSample() {
   f.design.value = "Pink with hearts and my name on it";
   const base = "/api/samples/partial_hand/";
   if (state.mode === "photo") {
-    paintDrop($(".drop[data-key=top]"), "Sample · from above", base + "A_top.jpg");
-    paintDrop($(".drop[data-key=side]"), "Sample · from the side", base + "B_side.jpg");
-    paintDrop($('[data-pane=photo] .drop[data-key=sound]'), "Sample · other hand", base + "C_sound.jpg");
+    paintDrop($(".drop[data-key=top]"), "Sample A", base + "A_top.jpg");
+    paintDrop($(".drop[data-key=side]"), "Sample B", base + "B_side.jpg");
+    paintDrop($('[data-pane=photo] .drop[data-key=sound]'), "Sample C", base + "C_sound.jpg");
   } else {
-    paintDrop($(".drop[data-key=scan]"), "Sample · scan.ply", null);
-    paintDrop($('[data-pane=lidar] .drop[data-key=sound]'), "Sample · other hand", base + "C_sound.jpg");
+    paintDrop($(".drop[data-key=scan]"), "Sample scan (PLY)", null);
+    paintDrop($('[data-pane=lidar] .drop[data-key=sound]'), "Sample C", base + "C_sound.jpg");
   }
   $("#goBtn").scrollIntoView({ behavior: "smooth", block: "center" });
 }
@@ -171,7 +163,7 @@ async function start() {
   for (const [k, file] of Object.entries(state.files)) fd.append(k, file);
   state.refs.forEach((r) => fd.append("refs", r));
   $("#goBtn").disabled = true;
-  $("#goBtn").textContent = "Starting…";
+  $("#goBtn").textContent = "Uploading";
   try {
     const res = await fetch("/api/jobs", { method: "POST", body: fd });
     if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
@@ -180,13 +172,13 @@ async function start() {
     state.t0 = Date.now();
     history.replaceState(null, "", `#job=${id}`);
     show("run");
-    $("#runTitle").textContent = "Building the kit…";
+    $("#runTitle").textContent = "Building the kit";
     poll();
   } catch (e) {
     showError({ message: String(e.message || e) });
   } finally {
     $("#goBtn").disabled = false;
-    $("#goBtn").textContent = "Generate print kit";
+    $("#goBtn").textContent = "Measure and build the kit";
   }
 }
 
@@ -242,7 +234,7 @@ function showResult(r, v) {
   state.result = r;
   show("done");
   const w = r.warnings || [];
-  $("#warnings").innerHTML = w.length ? `<b>Check before printing</b><ul>${w.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
+  $("#warnings").innerHTML = w.length ? `<b>Check these before printing</b><ul>${w.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
   if (!state.viewer) state.viewer = new Viewer($("#viewer"));
   setView("arm");
   const plateSeg = $("#plateSeg");
@@ -252,11 +244,11 @@ function showResult(r, v) {
   );
 
   const tot = r.printability.reduce((a, p) => ({ g: a.g + p.grams_each * p.count, m: a.m + p.minutes_each * p.count }), { g: 0, m: 0 });
-  $("#tiles").innerHTML = [
-    tile("Hand size", `${Math.round(r.sizing.width_scale * 100)}<small>% wide</small>`, `${Math.round(r.sizing.length_scale * 100)}% long`),
-    tile("Wrist", `${fmt(r.measurements.wrist_circumference, 0)}<small>mm</small>`, `${fmt(r.measurements.wrist_width)} × ${fmt(r.measurements.wrist_depth)} mm`),
-    tile("Gauntlet", `${fmt(r.gauntlet.length_mm, 0)}<small>mm</small>`, `${fmt(r.plan.gap_mm)} mm padding gap`),
-    tile("Print", `${(tot.m / 60).toFixed(1)}<small>h</small>`, `~${Math.round(tot.g)} g PLA · ${r.plates.length} plates`),
+  $("#summary").innerHTML = [
+    item("Hand scale", `${Math.round(r.sizing.width_scale * 100)}% wide, ${Math.round(r.sizing.length_scale * 100)}% long`),
+    item("Wrist", `${fmt(r.measurements.wrist_circumference, 0)} mm around`),
+    item("Gauntlet", `${fmt(r.gauntlet.length_mm, 0)} mm, ${fmt(r.plan.gap_mm)} mm gap`),
+    item("Printing", `about ${(tot.m / 60).toFixed(1)} h, ${Math.round(tot.g)} g`),
   ].join("");
 
   renderFit(r);
@@ -265,17 +257,17 @@ function showResult(r, v) {
   renderPrint(r);
   renderGuide(r);
   renderFiles(r, v);
-  openTab("fit");
+  openTab("files");
 }
 
 const bed = () => { const f = $("#form"); return [+f.bed_x.value || 220, +f.bed_y.value || 220]; };
-const tile = (k, v, s) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+const item = (k, v) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
 
 function setView(v) {
   $$("#viewSeg button").forEach((b) => b.classList.toggle("on", b.dataset.v === v));
   $("#plateSeg").hidden = v !== "plates";
   $("#ringToggle").hidden = v !== "arm";
-  $("#gridNote").textContent = v === "arm" ? "grid: 10 mm" : `bed: ${bed()[0]} × ${bed()[1]} mm · grid 20 mm`;
+  $("#gridNote").textContent = v === "arm" ? "grid 10 mm" : `bed ${bed()[0]} × ${bed()[1]} mm, grid 20 mm`;
   const r = state.result;
   if (!r) return;
   if (v === "arm") {
@@ -303,7 +295,7 @@ function renderFit(r) {
     m.residual_palm_width ? ["Residual hand width × length", `${fmt(m.residual_palm_width)} × ${fmt(m.residual_length)} mm`] : null,
     s.hand_length ? ["Other hand length × breadth", `${fmt(s.hand_length)} × ${fmt(s.hand_breadth)} mm`] : null,
     ["Expected accuracy", `±${fmt(m.uncertainty_mm)} mm (${r.mode === "lidar" ? "LiDAR" : "photos"})`],
-    m.camera_height_cm ? ["Camera height", Object.entries(m.camera_height_cm).map(([k, v]) => `${k} ${v} cm`).join(" · ")] : null,
+    m.camera_height_cm ? ["Camera height", Object.entries(m.camera_height_cm).map(([k, v]) => `${k} ${v} cm`).join(", ")] : null,
   ].filter(Boolean);
   const c = r.check || {};
   $("#pFit").innerHTML = `
@@ -311,8 +303,8 @@ function renderFit(r) {
       <div class="box"><h3>Measurements</h3><table class="kv">${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("")}</table></div>
       <div class="box"><h3>Forearm profile</h3><div id="profileChart"></div></div>
     </div>
-    ${c.summary ? `<div class="box claude" style="margin-top:12px"><h3>Claude's check</h3><p>${esc(c.summary)}</p>${c.limb_difference_notes ? `<p>${esc(c.limb_difference_notes)}</p>` : ""}</div>` : ""}
-    ${r.overlays.length ? `<div class="box" style="margin-top:12px"><h3>What we measured</h3><div class="overlays">${r.overlays.map((o) => `<figure><img src="${o.url}" alt="${esc(o.key)}"><figcaption>${esc(o.key)}</figcaption></figure>`).join("")}</div></div>` : ""}`;
+    ${c.summary ? `<div class="box claude" style="margin-top:12px"><h3>Photo check</h3><p>${esc(c.summary)}</p>${c.limb_difference_notes ? `<p>${esc(c.limb_difference_notes)}</p>` : ""}</div>` : ""}
+    ${r.overlays.length ? `<div class="box" style="margin-top:12px"><h3>Measured outlines</h3><div class="overlays">${r.overlays.map((o) => `<figure><img src="${o.url}" alt="${esc(o.key)}"><figcaption>${esc(o.key)}</figcaption></figure>`).join("")}</div></div>` : ""}`;
   drawProfile($("#profileChart"), m.profile, r.gauntlet);
 }
 
@@ -330,16 +322,16 @@ function renderSizing(r) {
       <p>e-NABLE sizing today picks one scale from knuckle width. Fitted sets width from what the palm has to fit over and length from the other hand, so the device follows this person's proportions.</p>
       <div class="cmp">
         <div class="c"><div class="t">One uniform scale (${Math.round(s.uniform.scale * 100)}%)</div><div class="n">${err(c.uniform_length_error_mm)}<small> mm length vs. her hand</small></div></div>
-        <div class="c good"><div class="t">Fitted (${Math.round(s.width_scale * 100)}% wide · ${Math.round(s.length_scale * 100)}% long)</div><div class="n">${err(c.ours_length_error_mm)}<small> mm</small></div></div>
+        <div class="c good"><div class="t">Fitted (${Math.round(s.width_scale * 100)}% wide, ${Math.round(s.length_scale * 100)}% long)</div><div class="n">${err(c.ours_length_error_mm)}<small> mm</small></div></div>
       </div>
       <table class="kv">
         <tr><td>Width scale (fit)</td><td>${fmt(s.fit_width_scale * 100, 0)}%</td></tr>
         <tr><td>Width scale (match other hand)</td><td>${s.look_width_scale ? fmt(s.look_width_scale * 100, 0) + "%" : "–"}</td></tr>
-        <tr><td>Length scale</td><td>${fmt(s.length_scale * 100, 0)}% · ${esc(s.length_source)}</td></tr>
+        <tr><td>Length scale</td><td>${fmt(s.length_scale * 100, 0)}%, ${esc(s.length_source)}</td></tr>
         <tr><td>Device hand length × knuckle breadth</td><td>${fmt(s.ours.length_mm)} × ${fmt(s.ours.breadth_mm)} mm</td></tr>
         <tr><td>Padding inside the palm</td><td>${fmt(s.padding_per_side_mm)} mm each side</td></tr>
       </table>
-      ${[...s.flags, ...s.notes].map((n) => `<p class="part-notes">• ${esc(n)}</p>`).join("")}
+      ${[...s.flags, ...s.notes].map((n) => `<p class="part-notes">${esc(n)}</p>`).join("")}
     </div>
     <div class="panel-grid" style="margin-top:12px">
       ${ansur}
@@ -369,8 +361,8 @@ function renderPrint(r) {
     <tr><th>Part</th><th>Qty</th><th>Size (mm)</th><th>Each</th><th></th></tr>
     ${r.printability
       .map(
-        (p) => `<tr><td><span class="dot" style="background:${p.color}"></span>${esc(p.label)}<div class="part-notes">${esc(p.color_name)}${p.notes.length ? " · " + p.notes.map(esc).join(" ") : ""}</div></td>
-      <td class="n">${p.count}</td><td class="n">${p.size_mm.map((x) => Math.round(x)).join("×")}</td><td class="n">${p.minutes_each} min · ${p.grams_each} g</td>
+        (p) => `<tr><td><span class="dot" style="background:${p.color}"></span>${esc(p.label)}<div class="part-notes">${esc(p.color_name)}${p.notes.length ? ". " + p.notes.map(esc).join(" ") : ""}</div></td>
+      <td class="n">${p.count}</td><td class="n">${p.size_mm.map((x) => Math.round(x)).join("×")}</td><td class="n">${p.minutes_each} min, ${p.grams_each} g</td>
       <td><span class="status ${p.status}">${p.status}</span></td></tr>`
       )
       .join("")}
@@ -381,7 +373,7 @@ function renderPrint(r) {
 function renderGuide(r) {
   const p = r.packet || {};
   $("#pGuide").innerHTML = `
-    ${p.recipient_summary ? `<div class="recipient"><b>For ${esc(r.recipient.name || "the recipient")} · ${esc(p.recipient_language || "")}</b>${esc(p.recipient_summary)}</div>` : ""}
+    ${p.recipient_summary ? `<div class="recipient"><b>Summary for ${esc(r.recipient.name || "the family")}${p.recipient_language ? ` (${esc(p.recipient_language)})` : ""}</b>${esc(p.recipient_summary)}</div>` : ""}
     <div class="box md">${DOMPurify.sanitize(marked.parse(p.volunteer_guide_markdown || ""))}</div>`;
 }
 
@@ -393,15 +385,16 @@ function renderFiles(r, v) {
   state.approved = approved;
   const fileRow = (f) =>
     !approved && isPrintFile(f.name)
-      ? `<li class="locked"><span>${esc(f.label)}</span><span class="dl" title="Sign off above to download">🔒 ${f.kind.toUpperCase()}</span></li>`
+      ? `<li class="locked"><span>${esc(f.label)}</span><span class="dl" title="Sign off above to download">${f.kind.toUpperCase()} locked</span></li>`
       : `<li><span>${esc(f.label)}</span><a class="dl" href="${f.url}" download>${f.kind.toUpperCase()}</a></li>`;
   $("#pFiles").innerHTML = `
-    <div class="box">
-      ${approved ? `<div class="approved">✓ Reviewed by ${esc(approved.name)}.</div>` : `
+    <div class="box signoff">
+      ${approved ? `<div class="approved">Signed off by ${esc(approved.name)}. The print files are unlocked.</div>` : `
       <h3>Volunteer sign-off</h3>
-      <label class="check-row"><input type="checkbox" id="apCheck"> I've read the warnings and will print the fit-test ring first.</label>
-      <div class="approve"><label>Your name<input id="apName" placeholder="Volunteer name"></label><button class="btn primary" id="apBtn" disabled>Sign off</button></div>`}
-      ${approved ? "" : `<p class="part-notes">Print files unlock after sign-off. The build guide and measurements are available now.</p>`}
+      <p>Check the fit in the viewer and any warnings above, then sign to unlock the print files.</p>
+      <label class="check-row"><input type="checkbox" id="apCheck"> I've checked the fit and will print the fit-test ring first.</label>
+      <div class="approve"><label>Your name<input id="apName"></label><button class="btn primary" id="apBtn" disabled>Sign off</button></div>`}
+      ${approved ? "" : `<p class="part-notes">The build guide and measurements are available now.</p>`}
       <ul class="files">${r.files.map(fileRow).join("")}</ul>
       <p class="part-notes" style="margin-top:12px">Hand parts: Paraglider by Marcus Mendenhall (CC BY 3.0), from the e-NABLE Phoenix Reborn hand.</p>
     </div>`;
@@ -435,10 +428,10 @@ function drawPopulation(el, pop) {
   rows.forEach(([label, d], i) => {
     const y = top + i * rowH;
     svg += `<text x="0" y="${y + 24}" font-size="13" font-weight="600" fill="var(--ink)">${label}</text>`;
-    svg += `<rect x="${padL}" y="${y + 4}" width="${x(d.uniform_mean_abs_mm) - padL}" height="18" rx="5" fill="var(--muted)" opacity=".35" />`;
-    svg += `<text x="${x(d.uniform_mean_abs_mm) + 6}" y="${y + 17}" font-size="12" fill="var(--ink-2)">${d.uniform_mean_abs_mm.toFixed(1)} mm · one scale</text>`;
-    svg += `<rect x="${padL}" y="${y + 27}" width="${Math.max(x(d.ours_mean_abs_mm) - padL, 3)}" height="18" rx="5" fill="var(--accent)" />`;
-    svg += `<text x="${x(d.ours_mean_abs_mm) + 8}" y="${y + 40}" font-size="12" fill="var(--accent)" font-weight="600">${d.ours_mean_abs_mm.toFixed(1)} mm · Fitted</text>`;
+    svg += `<rect x="${padL}" y="${y + 4}" width="${x(d.uniform_mean_abs_mm) - padL}" height="18" rx="1" fill="var(--muted)" opacity=".35" />`;
+    svg += `<text x="${x(d.uniform_mean_abs_mm) + 6}" y="${y + 17}" font-size="12" fill="var(--ink-2)">${d.uniform_mean_abs_mm.toFixed(1)} mm, one scale</text>`;
+    svg += `<rect x="${padL}" y="${y + 27}" width="${Math.max(x(d.ours_mean_abs_mm) - padL, 3)}" height="18" rx="1" fill="var(--accent)" />`;
+    svg += `<text x="${x(d.ours_mean_abs_mm) + 8}" y="${y + 40}" font-size="12" fill="var(--accent)" font-weight="700">${d.ours_mean_abs_mm.toFixed(1)} mm, Fitted</text>`;
   });
   svg += `</svg>`;
   el.innerHTML = svg;
@@ -453,16 +446,16 @@ function drawProfile(el, profile, g) {
   const vy = (v) => pt + (1 - (v - vmin) / (vmax - vmin)) * (H - pt - pb);
   const line = (k) => profile.map((p, i) => `${i ? "L" : "M"}${zx(p.z).toFixed(1)},${vy(p[k]).toFixed(1)}`).join("");
   let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">`;
-  if (g) svg += `<rect x="${zx(g.z_start)}" y="${pt}" width="${zx(g.z_end) - zx(g.z_start)}" height="${H - pt - pb}" fill="var(--accent-soft)" rx="6" />
+  if (g) svg += `<rect x="${zx(g.z_start)}" y="${pt}" width="${zx(g.z_end) - zx(g.z_start)}" height="${H - pt - pb}" fill="var(--accent-soft)" rx="1" />
     <text x="${(zx(g.z_start) + zx(g.z_end)) / 2}" y="${pt + 14}" font-size="11" fill="var(--accent)" text-anchor="middle" font-weight="600">gauntlet</text>`;
   svg += `<line x1="${zx(0)}" x2="${zx(0)}" y1="${pt}" y2="${H - pb}" stroke="var(--muted)" stroke-dasharray="3 3" />
     <text x="${zx(0) + 4}" y="${H - pb - 4}" font-size="11" fill="var(--muted)">wrist</text>`;
   for (let v = Math.ceil(vmin / 10) * 10; v <= vmax; v += 10) svg += `<text x="${pl - 6}" y="${vy(v) + 4}" font-size="10.5" fill="var(--muted)" text-anchor="end">${v}</text>`;
   svg += `<path d="${line("width")}" fill="none" stroke="var(--accent)" stroke-width="2.2" />
-    <path d="${line("depth")}" fill="none" stroke="var(--teal)" stroke-width="2.2" />
+    <path d="${line("depth")}" fill="none" stroke="var(--data-2)" stroke-width="2.2" />
     <text x="${W - pr}" y="${H - 8}" font-size="11" fill="var(--muted)" text-anchor="end">mm from wrist → elbow</text>
     <text x="${pl}" y="${H - 8}" font-size="11.5" fill="var(--accent)" font-weight="600">width</text>
-    <text x="${pl + 44}" y="${H - 8}" font-size="11.5" fill="var(--teal)" font-weight="600">depth</text></svg>`;
+    <text x="${pl + 44}" y="${H - 8}" font-size="11.5" fill="var(--data-2)" font-weight="700">depth</text></svg>`;
   el.innerHTML = svg;
 }
 
