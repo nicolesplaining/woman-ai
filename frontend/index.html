@@ -7,7 +7,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F7F5EF'/%3E%3Cpath d='M4 26H28M6 26V18M11 26V21M16 26V14M21 26V21M26 26V18' stroke='%231F6B4E' stroke-width='2.5'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script type="importmap">
     {
@@ -27,78 +27,60 @@
       <span class="brand-name">Fitted</span>
     </a>
     <p class="brand-tag">Sizing and gauntlet fitting for e-NABLE volunteers</p>
-    <nav class="topnav" aria-label="Marker sheet">
-      <span>Marker sheet:</span>
-      <a href="/api/marker-sheet?paper=letter">Letter</a>
-      <a href="/api/marker-sheet?paper=a4">A4</a>
-    </nav>
   </header>
 
   <main class="layout">
     <!-- ======================= INPUTS ======================= -->
     <section class="col-inputs" aria-label="Inputs">
       <div class="intro">
-        <h1>Size an e-NABLE hand from three photos of the arm.</h1>
-        <p>Fitted measures the arm on the printed marker sheet, scales the Paraglider hand to the recipient's width and length, and builds a gauntlet around their forearm. You check the result and sign off before anything prints.</p>
-        <p class="intro-sample"><button type="button" class="link-btn" id="sampleBtn">Load the sample</button> <span>a synthetic 10-year-old's arm, no real patient data</span></p>
+        <h1>Size an e-NABLE hand from three photos.</h1>
+        <p>Photograph the arm on the marker sheet. Fitted measures it, scales the Paraglider hand to this person's width and length, and builds a gauntlet around their forearm. A volunteer signs off before anything prints.</p>
       </div>
 
       <form id="form" autocomplete="off">
         <section class="sec">
-          <h2><span class="sec-n">1</span>Recipient</h2>
-          <div class="grid2">
-            <label>First name<input name="name" /></label>
-            <label>Age<input name="age" type="number" min="3" max="99" /></label>
-          </div>
-          <div class="grid2">
-            <div class="field">
-              <span class="lbl">Affected side</span>
-              <div class="seg" data-name="side">
-                <button type="button" data-v="left" class="on">Left</button>
-                <button type="button" data-v="right">Right</button>
+          <h2><span class="sec-n">1</span>Print the marker sheet</h2>
+          <div class="sheet-row">
+            <a class="sheet-thumb" href="/api/marker-sheet?paper=letter" aria-label="Download the US Letter marker sheet">
+              <img src="/api/marker-sheet?paper=letter&amp;fmt=png" alt="" />
+            </a>
+            <div class="sheet-body">
+              <p>Its four corner markers give Fitted the scale. Print at <b>100%</b>, not "fit to page".</p>
+              <div class="sheet-btns">
+                <a class="btn secondary" href="/api/marker-sheet?paper=letter">US Letter PDF</a>
+                <a class="btn secondary" href="/api/marker-sheet?paper=a4">A4 PDF</a>
               </div>
             </div>
-            <label>Sex
-              <select name="sex">
-                <option value="">Not given</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-              </select>
-            </label>
           </div>
-          <label>Language for the family's summary
-            <select name="language">
-              <option>English</option><option>Spanish</option><option>French</option><option>Portuguese</option>
-              <option>Arabic</option><option>Hindi</option><option>Swahili</option><option>Chinese</option>
-            </select>
-          </label>
-          <p class="note">Sex is only used to compare the hand against the matching ANSUR II reference range.</p>
         </section>
 
         <section class="sec">
-          <h2><span class="sec-n">2</span>The arm</h2>
+          <h2><span class="sec-n">2</span>Photograph the arm</h2>
           <div class="tabs" role="tablist" id="modeTabs">
-            <button type="button" role="tab" data-mode="photo" class="on">Photos</button>
+            <button type="button" role="tab" data-mode="photo" class="on">Phone photos</button>
             <button type="button" role="tab" data-mode="lidar">LiDAR scan</button>
           </div>
 
           <div data-pane="photo">
-            <p class="note">Print the marker sheet at 100% scale. Lay the arm along it, wrist near the top edge, and shoot from about 1 m with 2× zoom so the camera looks straight down.</p>
+            <p class="note">Shoot from about 1 m away with 2× zoom so the camera looks straight down. The faint pictures show what each photo should look like.</p>
             <div class="drops three">
               <label class="drop" data-key="top">
                 <input type="file" accept="image/*" name="top" hidden />
-                <span class="drop-t">A. Arm from above</span><span class="drop-s">Palm down. Needed.</span>
+                <img class="ghost" src="/api/samples/partial_hand/A_top.jpg" alt="" />
+                <span class="drop-cap"><span class="drop-t">A <span class="req">required</span></span><span class="drop-s">Arm from above, palm down</span></span>
               </label>
               <label class="drop" data-key="side">
                 <input type="file" accept="image/*" name="side" hidden />
-                <span class="drop-t">B. Arm from the side</span><span class="drop-s">Thumb up</span>
+                <img class="ghost" src="/api/samples/partial_hand/B_side.jpg" alt="" />
+                <span class="drop-cap"><span class="drop-t">B</span><span class="drop-s">Same arm on its side, thumb up</span></span>
               </label>
               <label class="drop" data-key="sound">
                 <input type="file" accept="image/*" name="sound" hidden />
-                <span class="drop-t">C. Other hand</span><span class="drop-s">Fingers together</span>
+                <img class="ghost" src="/api/samples/partial_hand/C_sound.jpg" alt="" />
+                <span class="drop-cap"><span class="drop-t">C</span><span class="drop-s">Other hand, fingers together</span></span>
               </label>
             </div>
-            <p class="note">B gives the forearm's thickness; C sets the hand's length and breadth. Without them Fitted estimates from typical proportions.</p>
+            <p class="note">B measures the forearm's thickness; C sets the hand's length and breadth. Without them Fitted estimates from typical proportions.</p>
           </div>
 
           <div data-pane="lidar" hidden>
@@ -106,30 +88,62 @@
             <div class="drops two">
               <label class="drop" data-key="scan">
                 <input type="file" accept=".obj,.stl,.ply,.glb,.gltf" name="scan" hidden />
-                <span class="drop-t">Arm scan</span><span class="drop-s">Affected side. Needed.</span>
+                <span class="drop-cap"><span class="drop-t">Arm scan <span class="req">required</span></span><span class="drop-s">Affected side, hand to elbow</span></span>
               </label>
               <label class="drop" data-key="sound">
                 <input type="file" accept="image/*" name="sound2" hidden />
-                <span class="drop-t">C. Other hand</span><span class="drop-s">Photo on the sheet</span>
+                <img class="ghost" src="/api/samples/partial_hand/C_sound.jpg" alt="" />
+                <span class="drop-cap"><span class="drop-t">C</span><span class="drop-s">Other hand on the sheet</span></span>
               </label>
             </div>
           </div>
 
+          <p class="sample-line">No photos yet? <button type="button" class="link-btn" id="sampleBtn">Use the sample arm</button>, a synthetic 10-year-old with no real patient data.</p>
+
           <details class="more">
-            <summary>Tape measurements</summary>
-            <p class="note">If you have them, these override the photos where they disagree by less than 15%.</p>
+            <summary>Add tape measurements</summary>
+            <p class="note">If you have them, these correct the photos where they disagree by less than 15%.</p>
             <div class="grid2">
-              <label>Wrist circumference<span class="unit"><input name="wrist_circ" type="number" step="0.5" />mm</span></label>
-              <label>Widest forearm circumference<span class="unit"><input name="forearm_circ" type="number" step="0.5" />mm</span></label>
-              <label>Other hand, length<span class="unit"><input name="sound_length" type="number" step="0.5" />mm</span></label>
-              <label>Other hand, knuckle breadth<span class="unit"><input name="sound_breadth" type="number" step="0.5" />mm</span></label>
+              <label>Wrist circumference<span class="unit"><input name="wrist_circ" type="number" step="0.5" inputmode="decimal" />mm</span></label>
+              <label>Widest forearm circumference<span class="unit"><input name="forearm_circ" type="number" step="0.5" inputmode="decimal" />mm</span></label>
+              <label>Other hand, length<span class="unit"><input name="sound_length" type="number" step="0.5" inputmode="decimal" />mm</span></label>
+              <label>Other hand, knuckle breadth<span class="unit"><input name="sound_breadth" type="number" step="0.5" inputmode="decimal" />mm</span></label>
             </div>
           </details>
         </section>
 
         <section class="sec">
-          <h2><span class="sec-n">3</span>Colors and pattern</h2>
-          <label>What does the recipient want it to look like?
+          <h2><span class="sec-n">3</span>About the recipient</h2>
+          <div class="grid-recipient">
+            <label class="f-name">First name<input name="name" autocomplete="off" /></label>
+            <label class="f-age">Age<input name="age" type="number" min="3" max="99" inputmode="numeric" /></label>
+            <div class="field f-side">
+              <span class="lbl">Affected side</span>
+              <div class="seg" data-name="side">
+                <button type="button" data-v="left" class="on">Left</button>
+                <button type="button" data-v="right">Right</button>
+              </div>
+            </div>
+            <label class="f-sex">Sex
+              <select name="sex">
+                <option value="">Not given</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </select>
+            </label>
+            <label class="f-lang">Language for the family's summary
+              <select name="language">
+                <option>English</option><option>Spanish</option><option>French</option><option>Portuguese</option>
+                <option>Arabic</option><option>Hindi</option><option>Swahili</option><option>Chinese</option>
+              </select>
+            </label>
+          </div>
+          <p class="note">Sex is only used to compare the hand against the matching ANSUR II reference range.</p>
+        </section>
+
+        <section class="sec">
+          <h2><span class="sec-n">4</span>Colors and pattern</h2>
+          <label>What would they like it to look like?
             <textarea name="design" rows="2" placeholder="For example: purple with yellow stars, and her name on the side"></textarea>
           </label>
           <div class="refs">
@@ -140,18 +154,20 @@
             <span class="note inline">A drawing, a toy or a color swatch. Used for colors only, not stored.</span>
             <div class="ref-list" id="refList"></div>
           </div>
+          <details class="more">
+            <summary>Printer bed size</summary>
+            <div class="grid3">
+              <label>X<span class="unit"><input name="bed_x" type="number" value="220" inputmode="numeric" />mm</span></label>
+              <label>Y<span class="unit"><input name="bed_y" type="number" value="220" inputmode="numeric" />mm</span></label>
+              <label>Z<span class="unit"><input name="bed_z" type="number" value="250" inputmode="numeric" />mm</span></label>
+            </div>
+          </details>
         </section>
 
-        <details class="sec more">
-          <summary>Printer bed size</summary>
-          <div class="grid3">
-            <label>X<span class="unit"><input name="bed_x" type="number" value="220" />mm</span></label>
-            <label>Y<span class="unit"><input name="bed_y" type="number" value="220" />mm</span></label>
-            <label>Z<span class="unit"><input name="bed_z" type="number" value="250" />mm</span></label>
-          </div>
-        </details>
-
-        <button class="btn primary big" id="goBtn" type="submit">Measure and build the kit</button>
+        <div class="actionbar">
+          <p class="ready" id="readyNote" aria-live="polite">Add photo A to start.</p>
+          <button class="btn primary big" id="goBtn" type="submit">Measure and build the kit</button>
+        </div>
         <p class="fine">Not a medical device. A volunteer reviews the fit before anything is printed.</p>
         <p class="fine" id="aiNote" hidden>Claude isn't connected, so photo checks, design and the build guide use simpler defaults.</p>
       </form>
@@ -160,32 +176,14 @@
     <!-- ======================= OUTPUT ======================= -->
     <section class="col-output" aria-label="Results" id="output">
       <div id="emptyState" class="empty">
-        <h2 class="out-h">What good photos look like</h2>
-        <div class="examples">
-          <figure class="ex-sheet">
-            <img src="/api/marker-sheet?paper=letter&amp;fmt=png" alt="The printed marker sheet: four black corner markers and a millimetre ruler" loading="lazy" />
-            <figcaption>The marker sheet. The four corner markers set the scale, so print it at 100%.</figcaption>
-          </figure>
-          <figure>
-            <img src="/api/samples/partial_hand/A_top.jpg" alt="Sample photo A: forearm and hand on the sheet, seen from above" loading="lazy" />
-            <figcaption><b>A.</b> From above, palm down</figcaption>
-          </figure>
-          <figure>
-            <img src="/api/samples/partial_hand/B_side.jpg" alt="Sample photo B: the same arm resting on its side" loading="lazy" />
-            <figcaption><b>B.</b> From the side, thumb up</figcaption>
-          </figure>
-          <figure>
-            <img src="/api/samples/partial_hand/C_sound.jpg" alt="Sample photo C: the other hand flat on the sheet" loading="lazy" />
-            <figcaption><b>C.</b> Other hand, fingers together</figcaption>
-          </figure>
-        </div>
-        <p class="note">Sample photos are rendered from a synthetic arm.</p>
-
-        <h2 class="out-h">What you get</h2>
+        <figure class="mat">
+          <div class="mat-view mm-grid" id="heroViewer"></div>
+          <figcaption>An example kit built by Fitted: palm and fingers scaled to one person, and a gauntlet shaped to their forearm. Drag to turn it.</figcaption>
+        </figure>
         <dl class="spec">
           <dt>Hand</dt><dd>Paraglider palm, fingers and thumb, scaled separately in width and length. Joints stay standard size.</dd>
           <dt>Gauntlet</dt><dd>Built from the measured forearm with a padding gap, a slip-on opening and strap slots.</dd>
-          <dt>Fit-test ring</dt><dd>A 15 mm slice of the gauntlet. Print it first: about 15 minutes instead of hours.</dd>
+          <dt>Fit-test ring</dt><dd>A 15 mm slice of the gauntlet to print first: about 15 minutes instead of hours.</dd>
           <dt>Build guide</dt><dd>Parts, print settings, assembly steps and a plain-language summary for the family.</dd>
           <dt>Sign-off</dt><dd>Print files unlock after a volunteer checks the fit and signs with their name.</dd>
         </dl>
@@ -220,7 +218,7 @@
             <span class="grid-note" id="gridNote">grid 10 mm</span>
             <label class="toggle" id="ringToggle"><input type="checkbox" /> Show fit ring</label>
             <div class="menu export">
-              <button type="button" class="btn secondary small" id="exportBtn">Open in slicer</button>
+              <button type="button" class="btn quiet small" id="exportBtn">Open in slicer</button>
               <div class="menu-pop up" id="exportMenu" hidden>
                 <a data-app="bambustudio" href="#">Bambu Studio</a>
                 <a data-app="prusaslicer" href="#">PrusaSlicer</a>

@@ -14,6 +14,10 @@ async function init() {
   try {
     state.meta = await (await fetch("/api/meta")).json();
     $("#aiNote").hidden = !!state.meta.ai_available;
+    // Example output on the mat, in the site's own colors: off-white hand, green gauntlet.
+    const demo = await (await fetch("demo/demo.json")).json();
+    state.hero = new Viewer($("#heroViewer"));
+    state.hero.showDemo(demo.map((p) => ({ ...p, color: p.url.includes("gauntlet") ? "#c8a25e" : "#ecebe4" })));
   } catch (e) {
     console.error(e);
   }
@@ -30,9 +34,11 @@ async function init() {
       state.mode = b.dataset.mode;
       $$("#modeTabs button").forEach((x) => x.classList.toggle("on", x === b));
       $$("[data-pane]").forEach((p) => (p.hidden = p.dataset.pane !== state.mode));
+      updateReady();
     })
   );
   $$(".drop").forEach(setupDrop);
+  updateReady();
   $("#refsInput").onchange = (e) => {
     for (const f of e.target.files) if (state.refs.length < 4) state.refs.push(f);
     e.target.value = "";
@@ -79,6 +85,27 @@ function setFile(drop, key, file, url) {
   state.files[key] = file;
   state.sample = null;
   paintDrop(drop, file?.name || "sample", url || (file && file.type.startsWith("image/") ? URL.createObjectURL(file) : null));
+  updateReady();
+}
+
+// The note beside the main button says what's still missing.
+function updateReady() {
+  const el = $("#readyNote");
+  const f = state.files;
+  let ok, msg;
+  if (state.sample) {
+    ok = true;
+    msg = "Sample arm loaded. Ready to build.";
+  } else if (state.mode === "photo") {
+    const missing = ["side", "sound"].filter((k) => !f[k]).map((k) => (k === "side" ? "B" : "C"));
+    ok = !!f.top;
+    msg = !f.top ? "Add photo A to start." : missing.length ? `Photo A added. ${missing.join(" and ")} would improve accuracy.` : "All three photos added. Ready to build.";
+  } else {
+    ok = !!f.scan;
+    msg = ok ? "Scan added. Ready to build." : "Add the arm scan to start.";
+  }
+  el.textContent = msg;
+  el.classList.toggle("ok", ok);
 }
 
 function paintDrop(drop, label, url) {
@@ -102,6 +129,7 @@ function paintDrop(drop, label, url) {
     $$(".thumb, .thumb-label, .x", drop).forEach((n) => n.remove());
     drop.classList.remove("filled");
     $("input", drop).value = "";
+    updateReady();
   };
   drop.append(t, l, x);
 }
@@ -139,7 +167,7 @@ function loadSample() {
     paintDrop($(".drop[data-key=scan]"), "Sample scan (PLY)", null);
     paintDrop($('[data-pane=lidar] .drop[data-key=sound]'), "Sample C", base + "C_sound.jpg");
   }
-  $("#goBtn").scrollIntoView({ behavior: "smooth", block: "center" });
+  updateReady();
 }
 
 // ---------------------------------------------------------------- submit + poll
@@ -172,6 +200,8 @@ async function start() {
     state.t0 = Date.now();
     history.replaceState(null, "", `#job=${id}`);
     show("run");
+    // On one-column layouts the progress is below the form; bring it into view.
+    if (matchMedia("(max-width: 1000px)").matches) $("#output").scrollIntoView({ behavior: "smooth", block: "start" });
     $("#runTitle").textContent = "Building the kit";
     poll();
   } catch (e) {
