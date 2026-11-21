@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import threading
 import time
 import traceback
@@ -23,7 +24,8 @@ from .gauntlet import GauntletParams, build_gauntlet
 from .hand import PALM_BASE, render_hand
 from .lidar import ScanError, build_limb, guess_orientation, load_scan, scan_views
 from .limb import LimbModel, polygon_perimeter, superellipse_contour
-from .photo import PhotoError, load_photo, overlay, rectify, refine_wrist, segment_arm, smooth_profile, width_profile
+from .photo import PhotoError, load_photo, measure_sound_hand, overlay, rectify, refine_wrist, segment_arm, smooth_profile, width_profile
+from .review import render_fit, review_bounds, review_loop, settings_of
 from .printability import Part, check, on_bed, orient_gauntlet, pack, write_3mf
 from .sizing import compute_sizing
 
@@ -38,6 +40,7 @@ STEPS = {
         ("plan", "Size the hand and plan the device"),
         ("design", "Design the look"),
         ("generate", "Generate the parts"),
+        ("review", "Review the fit with Claude"),
         ("print", "Check printability"),
         ("packet", "Write the build guide"),
     ],
@@ -48,6 +51,7 @@ STEPS = {
         ("plan", "Size the hand and plan the device"),
         ("design", "Design the look"),
         ("generate", "Generate the parts"),
+        ("review", "Review the fit with Claude"),
         ("print", "Check printability"),
         ("packet", "Write the build guide"),
     ],
@@ -115,6 +119,55 @@ class Job:
                 "approved": self.approved,
             }
 
+    # ---- persistence: job.json in the job folder, so a restart keeps finished jobs
+
+    def save(self):
+        with self.lock:
+            state = {
+                "id": self.id,
+                "mode": self.mode,
+                "created": self.created,
+                "status": self.status,
+                "steps": self.steps,
+                "result": self.result,
+                "error": self.error,
+                "approved": self.approved,
+            }
+            data = json.dumps(state, default=float)
+        tmp = self.dir / "job.json.tmp"
+        tmp.write_text(data)
+        tmp.replace(self.dir / "job.json")
+
+    @classmethod
+    def from_disk(cls, job_id: str) -> Optional["Job"]:
+        path = DATA_DIR / job_id / "job.json"
+        if not path.is_file():
+            return None
+        state = json.loads(path.read_text())
+        job = cls.__new__(cls)
+        job.id = state["id"]
+        job.dir = DATA_DIR / job.id
+        job.mode = state["mode"]
+        job.created = state["created"]
+        job.status = state["status"]
+        job.steps = state["steps"]
+        job.result = state["result"] or {}
+        job.error = state["error"]
+        job.approved = state["approved"]
+        job.lock = threading.Lock()
+        if job.status in ("queued", "running"):
+            job.status = "error"
+            job.error = {"message": "The server restarted before this job finished. Please run it again.", "retake": None, "photo": None}
+            for s in job.steps:
+                if s["status"] in ("pending", "running"):
+                    s["status"] = "error" if s["status"] == "running" else "pending"
+        return job
+
+    def approve(self, name: str):
+        with self.lock:
+            self.approved = {"name": name, "at": time.time()}
+        self.save()
+
     def _step(self, key: str) -> dict:
         return next(s for s in self.steps if s["key"] == key)
 
@@ -144,6 +197,7 @@ class Job:
             s["ms"] = int((time.time() - t0) * 1000)
             if s["status"] == "running":
                 s["status"] = "done"
+        self.save()
 
     def url(self, name: str) -> str:
         return f"/api/jobs/{self.id}/files/{name}"
@@ -152,11 +206,23 @@ class Job:
 JOBS: dict[str, Job] = {}
 EXECUTOR = ThreadPoolExecutor(max_workers=2)
 AI_POOL = ThreadPoolExecutor(max_workers=4)  # Claude calls that can overlap within a job
+JOB_ID_RE = re.compile(r"[0-9a-f]{12}")
+
+
+def get_job(job_id: str) -> Optional[Job]:
+    """A job from memory, or from disk after a restart. None if it doesn't exist."""
+    job = JOBS.get(job_id)
+    if job is None and JOB_ID_RE.fullmatch(job_id or ""):
+        job = Job.from_disk(job_id)
+        if job is not None:
+            JOBS[job.id] = job
+    return job
 
 
 def submit(inp: Inputs) -> Job:
     job = Job(inp.mode)
     JOBS[job.id] = job
+    job.save()
     EXECUTOR.submit(run, job, inp)
     return job
 
@@ -359,24 +425,12 @@ def photo_measure(job: Job, inp: Inputs) -> tuple[LimbModel, dict, dict]:
         meas["wrist_method"] = how
 
         sound = {}
+        ws_sound = None
         if "sound" in profs:
-            psd = profs["sound"]
-            cl = by.get("sound", {})
-            cw = cl.get("wrist_tick_mm", -1)
-            ws_sound, _ = refine_wrist(psd, cw if cw is not None and cw >= 0 else None)
-            if not psd.valid[:3].any():
-                warns.append("The fingertips aren't fully on the sheet in the sound-hand photo; hand length may be short.")
-            L = ws_sound
-            ck = cl.get("knuckle_tick_mm", -1)
-            k_s = float(ck) if ck is not None and ck >= 0 and 0.30 * L <= ws_sound - ck <= 0.68 * L else ws_sound - 0.59 * L
-            # widest point within +-12 mm of the knuckle line (fingers together, thumb against the side)
-            spr = smooth_profile(psd)
-            win = (np.abs(psd.s - k_s) <= 12) & psd.valid
-            breadth_app = float(spr[win].max()) if win.any() else float(np.interp(k_s, psd.s, spr))
-            Hs = rects["sound"].camera_height_mm
-            breadth = breadth_app * (Hs - 14.0) / Hs
-            length = L * (Hs - 3.0) / Hs
-            sound = {"hand_length": round(length, 1), "hand_breadth": round(breadth, 1)}
+            got = measure_sound_hand(rects["sound"], profs["sound"], by.get("sound", {}))
+            warns += got["warnings"]
+            ws_sound = got["wrist_s"]
+            sound = {"hand_length": got["hand_length"], "hand_breadth": got["hand_breadth"]}
         if inp.manual.get("sound_length"):
             sound["hand_length"] = float(inp.manual["sound_length"])
         if inp.manual.get("sound_breadth"):
@@ -391,7 +445,7 @@ def photo_measure(job: Job, inp: Inputs) -> tuple[LimbModel, dict, dict]:
         )
         # final overlays with the chosen wrist
         for k in profs:
-            wsel = {"top": wrist_top, "side": wrist_side if have_side else None, "sound": ws_sound if "sound" in profs else None}.get(k)
+            wsel = {"top": wrist_top, "side": wrist_side if have_side else None, "sound": ws_sound}.get(k)
             (job.dir / f"overlay_{k}.jpg").write_bytes(overlay(rects[k], masks[k], profs[k], f"Photo {k}", wsel))
     return limb, meas, {"check": check, "warnings": warns}
 
@@ -503,6 +557,7 @@ def run(job: Job, inp: Inputs):
         with job.lock:
             job.status = "error"
             job.error = {"message": f"Something went wrong: {e}", "retake": None, "photo": None}
+    job.save()
 
 
 def _run(job: Job, inp: Inputs):
@@ -610,21 +665,57 @@ def _run(job: Job, inp: Inputs):
             length_mm=plan["gauntlet_length_mm"],
             pattern_height_mm=height if has_pattern else 0.0,
         )
-        g = build_gauntlet(limb, params, track_plate_mesh=hand["track"], pattern_builder=pattern_builder(spec) if has_pattern else None)
-        warnings += g.info["warnings"]
-        arm_mesh = limb.to_trimesh()
-        arm_mesh.export(job.dir / "view_arm.stl")
-        g.gauntlet.export(job.dir / "view_gauntlet.stl")
-        g.fit_ring.export(job.dir / "view_fit_ring.stl")
-        try:
-            from .hand import assemble_preview
+        pattern = pattern_builder(spec) if has_pattern else None
 
-            asm = assemble_preview(job.dir / "hand", sizing["length_scale"], sizing["width_ratio"], right, g.info["hinge"]["center"])
-            for name, mesh in asm.items():
-                mesh.export(job.dir / f"view_{name}.stl")
-        except Exception:  # preview only; never block the kit
-            traceback.print_exc()
+        def build(p: GauntletParams):
+            return build_gauntlet(limb, p, track_plate_mesh=hand["track"], pattern_builder=pattern)
+
+        g = build(params)
+        arm_mesh = limb.to_trimesh()
         job.note("generate", f"Hand parts rendered by OpenSCAD in {hand['render_ms'] / 1000:.1f} s; gauntlet {g.info['length_mm']:.0f} mm long, {len(g.gauntlet.faces):,} triangles")
+
+    # -------- review: Claude looks at renders and may nudge four bounded settings, at most three times
+    with job.step("review"):
+        rbounds = review_bounds(gap=bounds["gap_mm"], length=bounds["gauntlet_length_mm"])
+        history: list = []
+        context = {"input_mode": inp.mode, "age": age, "measurements": {k: meas.get(k) for k in ("wrist_width", "wrist_depth", "forearm_length_measured")}}
+        try:
+            g2, p2, history = review_loop(
+                params,
+                build,
+                lambda res: render_fit(arm_mesh, res.gauntlet),
+                lambda images, settings, b: ai.review_fit(images, settings, b, context),
+                rbounds,
+                first_result=g,
+            )
+            g, params = g2, p2
+            changed = [c for h in history for c in h["changes"]]
+            last = history[-1] if history else {}
+            job.note(
+                "review",
+                f"{len(history)} review pass(es); " + ("adjusted " + "; ".join(changed) if changed else "no changes needed"),
+                ai_note=last.get("summary", ""),
+            )
+        except ai.AIError as e:
+            history = []
+            job.note("review", detail=f"Claude unavailable ({e}); skipped the render review. A volunteer should check the fit preview.", status="warn")
+        plan["gap_mm"] = params.gap_mm
+        plan["gauntlet_length_mm"] = g.info["length_mm"]
+        review = {"history": history, "final": settings_of(params), "bounds": rbounds}
+
+    # -------- preview files for the 3D viewer
+    warnings += g.info["warnings"]
+    arm_mesh.export(job.dir / "view_arm.stl")
+    g.gauntlet.export(job.dir / "view_gauntlet.stl")
+    g.fit_ring.export(job.dir / "view_fit_ring.stl")
+    try:
+        from .hand import assemble_preview
+
+        asm = assemble_preview(job.dir / "hand", sizing["length_scale"], sizing["width_ratio"], right, g.info["hinge"]["center"])
+        for name, mesh in asm.items():
+            mesh.export(job.dir / f"view_{name}.stl")
+    except Exception:  # preview only; never block the kit
+        traceback.print_exc()
 
     # -------- printability
     with job.step("print"):
@@ -716,6 +807,7 @@ def _run(job: Job, inp: Inputs):
             "check": limb_chk,
             "design": {**spec, "swatch": job.url("design_swatch.png")},
             "gauntlet": {k: v for k, v in g.info.items() if k != "warnings"},
+            "review": review,
             "printability": report,
             "plates": manifest,
             "files": [{**f, "url": job.url(f["name"])} for f in files],

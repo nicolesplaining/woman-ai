@@ -208,6 +208,51 @@ def plan_device(measurements: dict, sizing: dict, recipient: dict, limb_check: d
     return _call(SYSTEM_BASE, [{"type": "text", "text": text}], PLAN_SCHEMA, effort="low")
 
 
+# ---------------------------------------------------------------- render review
+
+REVIEW_SCHEMA = _obj(
+    {
+        "looks_good": BOOL,
+        "issues": {"type": "array", "items": STR},
+        "adjustments": _obj(
+            {
+                "gap_mm": NUM,
+                "gauntlet_length_mm": NUM,
+                "opening_deg": NUM,
+                "strap_near": NUM,
+                "strap_far": NUM,
+            }
+        ),
+        "summary": STR,
+    }
+)
+
+
+def review_fit(images: list[bytes], settings: dict, bounds: dict, context: dict) -> dict:
+    content = [{"type": "text", "text": "Renders of the generated gauntlet (blue) over the recipient's arm (skin color):"}]
+    for img in images:
+        content.append(_img(img))
+    content.append(
+        {
+            "type": "text",
+            "text": (
+                "Review how the gauntlet sits on the arm.\n\n"
+                f"Current settings: {json.dumps(settings)}\n"
+                f"Allowed ranges: {json.dumps(bounds)}\n"
+                f"Context: {json.dumps(context, default=float)}\n\n"
+                "Look for: the shell pressing into the arm or leaving a large gap; the gauntlet running past the forearm or "
+                "too short to brace against; the opening on the wrong side or too narrow to slip on; straps too close to the "
+                "ends. strap_near and strap_far are fractions of the gauntlet length from the hand end.\n"
+                "If it looks right, set looks_good true and repeat the current values in adjustments. Otherwise set "
+                "looks_good false and give new values within the allowed ranges for only the settings that should change "
+                "(repeat the current value for the rest). You cannot change the measurements, the hand size or anything "
+                "else. List each issue in plain words."
+            ),
+        }
+    )
+    return _call(SYSTEM_BASE, content, REVIEW_SCHEMA, effort="low")
+
+
 # ---------------------------------------------------------------- design
 
 DESIGN_SCHEMA = _obj(

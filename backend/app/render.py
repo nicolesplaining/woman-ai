@@ -25,18 +25,20 @@ def _look_basis(view_dir: np.ndarray, up: np.ndarray) -> tuple[np.ndarray, np.nd
 
 
 def _draw(canvas: np.ndarray, pts2d: np.ndarray, depth: np.ndarray, shade: np.ndarray, color, alpha: float):
+    """color: one RGB for every triangle, or an (N, 3) array with one RGB per triangle."""
     order = np.argsort(-depth)
     col = np.asarray(color, float)
+    cols = col if col.ndim == 2 else np.broadcast_to(col, (len(depth), 3))
     pts = np.round(pts2d * 4).astype(np.int32)  # 2 bits of sub-pixel precision
     if alpha >= 1.0:
         for i in order:
-            c = tuple(int(v) for v in np.clip(col * shade[i], 0, 255))
+            c = tuple(int(v) for v in np.clip(cols[i] * shade[i], 0, 255))
             cv2.fillConvexPoly(canvas, pts[i], c, lineType=cv2.LINE_8, shift=2)
     else:
         layer = canvas.copy()
         mask = np.zeros(canvas.shape[:2], np.uint8)
         for i in order:
-            c = tuple(int(v) for v in np.clip(col * shade[i], 0, 255))
+            c = tuple(int(v) for v in np.clip(cols[i] * shade[i], 0, 255))
             cv2.fillConvexPoly(layer, pts[i], c, lineType=cv2.LINE_8, shift=2)
             cv2.fillConvexPoly(mask, pts[i], 255, lineType=cv2.LINE_8, shift=2)
         m = (mask > 0)[..., None]
@@ -70,7 +72,7 @@ def render_ortho(
     canvas = np.full((h * S, w * S, 3), bg, np.uint8)
     light = np.asarray(light if light is not None else (-0.4 * r + 0.6 * u - 0.7 * d), float)
     light /= np.linalg.norm(light)
-    for l in layers:
+    def faces(l: Layer):
         m = l.mesh
         rel = m.vertices - center
         px = np.stack([(rel @ r) * px_per_mm + w / 2, -(rel @ u) * px_per_mm + h / 2], axis=1) * S
@@ -79,7 +81,19 @@ def render_ortho(
         n = m.face_normals
         front = (n @ d) < 0
         shade = 0.3 + 0.7 * np.clip(n @ light, 0, 1)
-        _draw(canvas, tri[front], depth[front], shade[front], l.color, l.alpha)
+        cols = np.broadcast_to(np.asarray(l.color, float), (int(front.sum()), 3))
+        return tri[front], depth[front], shade[front], cols
+
+    # Opaque layers are depth-sorted together, so a nearer surface always covers a farther one
+    # whichever layer it belongs to. Translucent layers go on top, one at a time.
+    opaque = [faces(l) for l in layers if l.alpha >= 1.0]
+    if opaque:
+        tri, depth, shade, cols = (np.concatenate(x) for x in zip(*opaque))
+        _draw(canvas, tri, depth, shade, cols, 1.0)
+    for l in layers:
+        if l.alpha < 1.0:
+            tri, depth, shade, cols = faces(l)
+            _draw(canvas, tri, depth, shade, cols, l.alpha)
     img = cv2.resize(canvas, (w, h), interpolation=cv2.INTER_AREA)
     info = {"right": r, "up": u, "dir": d, "center": center, "px_per_mm": px_per_mm, "size": size}
     return img, info

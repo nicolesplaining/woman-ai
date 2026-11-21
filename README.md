@@ -32,15 +32,16 @@ Women already get less from prosthetic care: in clinical (lower-limb) studies th
 | 4. Size the hand and plan the device | Code + Claude | Separate width and length scales for the Paraglider hand, from the person's other hand; Claude checks the plan against e-NABLE guidance |
 | 5. Design the look | Claude | Turns "purple with stars" or a reference image into part colors (from real filament) and a raised gauntlet pattern |
 | 6. Generate the parts | Code | Renders the Paraglider palm and fingers in OpenSCAD (WebAssembly); builds the gauntlet from the arm surface with a slip-on opening and strap slots; makes a 15-minute fit-test ring |
-| 7. Check printability | Code | Watertightness, wall thickness, overhangs, bed fit, print-time and filament estimates; packs build plates and exports colored 3MF files |
-| 8. Write the build guide | Claude | Parts list, print settings, assembly steps, a fit checklist and a plain-language summary for the family |
-| Approve | Volunteer | Nothing is marked ready to print until a volunteer signs off |
+| 7. Review the fit | Claude | Looks at renders of the gauntlet on the arm and may adjust only four settings (padding gap, gauntlet length, opening angle, strap positions), each kept within fixed limits, for at most three passes; the gauntlet is rebuilt after each change |
+| 8. Check printability | Code | Watertightness, wall thickness, overhangs, bed fit, print-time and filament estimates; packs build plates and exports colored 3MF files |
+| 9. Write the build guide | Claude | Parts list, print settings, assembly steps, a fit checklist and a plain-language summary for the family |
+| Approve | Volunteer | Print files (STL, 3MF, ZIP) stay locked until a volunteer signs off; the 3D preview, build guide and measurements are available before that |
 
 Claude makes judgement calls; every millimetre comes from code. Claude only sees photos, renders and numbers, never raw scans. LiDAR mode (OBJ, STL, PLY or GLB from apps like Polycam or Scaniverse) replaces steps 1–3 with scan cleanup and slicing.
 
 ## Quick start
 
-**Requirements:** Python 3 (tested with 3.14) and Node.js (tested with 26). An Anthropic API key is optional: without one, the Claude steps are skipped or fall back to simpler code, and the app tells you which.
+**Requirements:** Python 3.14 (`manifold3d` has no build for Python 3.15 yet, so use `python3.14 -m venv .venv` if 3.15 is your default) and Node.js (tested with 26). An Anthropic API key is optional: without one, the Claude steps are skipped or fall back to simpler code, and the app tells you which.
 
 ```bash
 cd backend
@@ -76,7 +77,7 @@ To try it without photos, use the synthetic sample in the app: a simulated 10-ye
 
 ### What you get
 
-Per job, in `backend/data/jobs/<id>/`:
+Per job, in `backend/data/jobs/<id>/`. Jobs are saved there as they run, so finished jobs survive a server restart; a job that was still running when the server stopped shows as interrupted. Print files download only after volunteer sign-off.
 
 - `fit_ring.3mf`: a 15 mm slice of the gauntlet at its tightest point. Print this first.
 - `kit.3mf`: every part, with colors set.
@@ -93,17 +94,17 @@ A sample job takes a few seconds without Claude, longer with it.
 
 | Test | Result |
 |---|---|
-| Photo measurement, all dimensions | **0.78 mm** mean error, 91% within 2 mm, no failures |
-| Women / men | 0.74 / 0.81 mm |
-| Child-sized / adult | 0.58 / 0.98 mm |
-| Skin types II–VI / type I | 0.61–0.80 / 1.13 mm |
+| Photo measurement, all dimensions | **0.57 mm** mean error, 95% within 2 mm, no failures |
+| Women / men | 0.56 / 0.58 mm |
+| Child-sized / adult | 0.39 / 0.75 mm |
+| Skin types II–VI / type I | 0.42–0.62 / 0.84 mm |
 | LiDAR (30 noisy scans with holes) | 0.47 mm, 100% within 2 mm |
-| Without perspective correction | 1.67 mm |
-| Without the side photo | 1.04 mm |
-| Other hand (sizing reference) | 2.1 mm length, 1.8 mm width (width always reads high) |
-| Device length, all 1,986 ANSUR II women | **10.4 mm with uniform scaling → 2.4 mm with Fitted**; within 3 mm: 16% → 75% |
-| Device length, all 4,082 ANSUR II men | 19.8 mm → 4.6 mm |
-| Claude photo check (24 photos) | Caught 20 of 20 bad photos; no false alarms on 4 good ones |
+| Without perspective correction | 1.50 mm |
+| Without the side photo | 0.87 mm |
+| Other hand (sizing reference) | 2.1 mm length, 0.27 mm width (100% of widths within 2 mm) |
+| Device length, all 1,986 ANSUR II women | **10.4 mm with uniform scaling → 2.1 mm with Fitted**; within 3 mm: 16% → 82% |
+| Device length, all 4,082 ANSUR II men | 19.8 mm → 3.3 mm; within 3 mm: 3% → 66% |
+| Claude photo check (24 photos, Nov 6 run) | Caught 20 of 20 bad photos; no false alarms on 4 good ones |
 
 For context: the best published single-photo hand measurement is 3.80 mm on real people ([HandAnthro](https://arxiv.org/abs/2609.37855), 2026 preprint), and e-NABLE's AI HandSizer reports about 12 mm in its designer's tests.
 
@@ -116,6 +117,17 @@ To re-run it from `backend/`:
 ```
 
 Add `--claude` to include the photo-check test, which needs an API key.
+
+## Tests
+
+From `backend/`:
+
+```bash
+.venv/bin/pip install pytest
+.venv/bin/python -m pytest tests
+```
+
+The tests never call the Claude API. They cover the hand-breadth measurement, the render review rules, job saving, the sign-off lock, the renderer, and full sample jobs with and without the review.
 
 ## Repository layout
 
@@ -131,15 +143,17 @@ backend/
     hand.py           Paraglider parts via OpenSCAD (WebAssembly, run through Node)
     gauntlet.py       Gauntlet shell, opening, strap slots, fit-test ring
     design.py         Filament colors and gauntlet motifs
+    review.py         Claude's bounded render review (four settings, at most three passes)
     printability.py   Print checks, estimates, plate packing, 3MF export
     render.py         Renders for Claude and the viewer
-    ai.py             Claude calls (photo check, device plan, design spec, build guide)
+    ai.py             Claude calls (photo check, device plan, design spec, render review, build guide)
     synthetic.py      Synthetic arms, photos and scans for samples and tests
     data/ansur_hands.json   ANSUR II hand and arm columns
   scad/               OpenSCAD runner (Node) and patched Paraglider files
   samples/            Synthetic sample inputs with ground truth
   scripts/            build_ansur.py, make_samples.py, benchmark.py
   benchmark/          Benchmark results
+  tests/              pytest suite
 frontend/             Single-page app with a three.js 3D viewer
 docs/PITCH_STATS.md   Research notes and sources
 PLAN.md               Project plan
@@ -154,7 +168,7 @@ PLAN.md               Project plan
 | POST | `/api/jobs` | Start a job: multipart `payload` JSON plus `top`, `side`, `sound`, `scan` and up to 4 `refs` |
 | GET | `/api/jobs/{id}` | Job status, steps, measurements and files |
 | GET | `/api/jobs/{id}/files/{name}` | Download an output file |
-| POST | `/api/jobs/{id}/approve` | Volunteer sign-off: `{"name": "..."}` |
+| POST | `/api/jobs/{id}/approve` | Volunteer sign-off: `{"name": "..."}`. Unlocks the print files |
 
 ## Limitations
 
@@ -201,6 +215,6 @@ The full deck is in [`docs/pitch/Fitted-pitch-deck.pdf`](docs/pitch/Fitted-pitch
 - **e-NABLE Phoenix Reborn** by enablesierraleone, CC BY 3.0, plus the other designs listed in `backend/scad/paraglider/SOURCES.txt`.
 - **ANSUR II** (U.S. Army, 2012), public data from the [Penn State OPEN Design Lab](https://www.openlab.psu.edu/ansur2/).
 - [openscad-wasm-prebuilt](https://www.npmjs.com/package/openscad-wasm-prebuilt), [three.js](https://threejs.org/), FastAPI, OpenCV, trimesh and manifold3d.
-- Claude by Anthropic for photo checks, device planning, design specs and build guides.
+- Claude by Anthropic for photo checks, device planning, design specs, render review and build guides.
 
 The e-NABLE designs are shared under Creative Commons licenses that require attribution. Keep these credits with any printed device or derived files.

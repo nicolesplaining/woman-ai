@@ -30,7 +30,8 @@ from . import ai  # noqa: E402
 from .design import FILAMENTS, MOTIFS  # noqa: E402
 from .hand import PALM_BASE  # noqa: E402
 from .photo import marker_sheet_pdf, marker_sheet_png  # noqa: E402
-from .pipeline import JOBS, SAMPLES_DIR, InputError, Inputs, sample_inputs, submit  # noqa: E402
+from .pipeline import SAMPLES_DIR, InputError, Inputs, sample_inputs, submit  # noqa: E402
+from .pipeline import get_job as load_job  # noqa: E402
 from .sizing import ansur_summary, population_check  # noqa: E402
 
 app = FastAPI(title="Fitted")
@@ -143,35 +144,42 @@ async def create_job(
 
 @app.get("/api/jobs/{job_id}")
 def get_job(job_id: str):
-    job = JOBS.get(job_id)
+    job = load_job(job_id)
     if not job:
         raise HTTPException(404)
     return JSONResponse(job.view())
 
 
+def is_print_file(name: str) -> bool:
+    """Files a volunteer could print from; the 3D-viewer copies (view_*.stl) are previews."""
+    return name.endswith((".3mf", ".zip")) or (name.endswith(".stl") and not name.startswith("view_"))
+
+
 @app.get("/api/jobs/{job_id}/files/{name}")
 def job_file(job_id: str, name: str):
-    job = JOBS.get(job_id)
-    if not job or not re.fullmatch(r"[A-Za-z0-9_.-]+", name):
+    job = load_job(job_id)
+    if not job or not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name.startswith("job.json"):
         raise HTTPException(404)
     p = job.dir / name
     if not p.is_file():
         raise HTTPException(404)
-    download = name.endswith((".zip", ".3mf", ".md", ".json")) or (name.endswith(".stl") and not name.startswith("view_"))
+    if is_print_file(name) and not job.approved:
+        raise HTTPException(403, "A volunteer needs to review and sign off on this device before the print files can be downloaded.")
+    download = is_print_file(name) or name.endswith((".md", ".json"))
     return FileResponse(p, filename=name if download else None)
 
 
 @app.post("/api/jobs/{job_id}/approve")
 def approve(job_id: str, body: dict):
-    job = JOBS.get(job_id)
+    job = load_job(job_id)
     if not job:
         raise HTTPException(404)
+    if job.status != "done":
+        raise HTTPException(409, "The job hasn't finished yet.")
     name = str(body.get("name") or "").strip()[:80]
     if not name:
         raise HTTPException(400, "Name required")
-    import time
-
-    job.approved = {"name": name, "at": time.time()}
+    job.approve(name)
     return {"ok": True}
 
 

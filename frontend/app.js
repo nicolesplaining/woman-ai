@@ -385,15 +385,24 @@ function renderGuide(r) {
     <div class="box md">${DOMPurify.sanitize(marked.parse(p.volunteer_guide_markdown || ""))}</div>`;
 }
 
+// Same rule as the server: print files unlock after a volunteer signs off; viewer copies stay open.
+const isPrintFile = (name) => /\.(3mf|zip)$/.test(name) || (name.endsWith(".stl") && !name.startsWith("view_"));
+
 function renderFiles(r, v) {
   const approved = v.approved;
+  state.approved = approved;
+  const fileRow = (f) =>
+    !approved && isPrintFile(f.name)
+      ? `<li class="locked"><span>${esc(f.label)}</span><span class="dl" title="Sign off above to download">🔒 ${f.kind.toUpperCase()}</span></li>`
+      : `<li><span>${esc(f.label)}</span><a class="dl" href="${f.url}" download>${f.kind.toUpperCase()}</a></li>`;
   $("#pFiles").innerHTML = `
     <div class="box">
       ${approved ? `<div class="approved">✓ Reviewed by ${esc(approved.name)}.</div>` : `
       <h3>Volunteer sign-off</h3>
       <label class="check-row"><input type="checkbox" id="apCheck"> I've read the warnings and will print the fit-test ring first.</label>
       <div class="approve"><label>Your name<input id="apName" placeholder="Volunteer name"></label><button class="btn primary" id="apBtn" disabled>Sign off</button></div>`}
-      <ul class="files">${r.files.map((f) => `<li><span>${esc(f.label)}</span><a class="dl" href="${f.url}" download>${f.kind.toUpperCase()}</a></li>`).join("")}</ul>
+      ${approved ? "" : `<p class="part-notes">Print files unlock after sign-off. The build guide and measurements are available now.</p>`}
+      <ul class="files">${r.files.map(fileRow).join("")}</ul>
       <p class="part-notes" style="margin-top:12px">Hand parts: Paraglider by Marcus Mendenhall (CC BY 3.0), from the e-NABLE Phoenix Reborn hand.</p>
     </div>`;
   if (!approved) {
@@ -401,7 +410,8 @@ function renderFiles(r, v) {
     $("#apCheck").onchange = upd;
     $("#apName").oninput = upd;
     $("#apBtn").onclick = async () => {
-      await fetch(`/api/jobs/${state.job}/approve`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: $("#apName").value }) });
+      const res = await fetch(`/api/jobs/${state.job}/approve`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: $("#apName").value }) });
+      if (!res.ok) return hint((await res.json()).detail || "Couldn't save the sign-off. Try again.");
       const nv = await (await fetch(`/api/jobs/${state.job}`)).json();
       renderFiles(r, nv);
     };
@@ -461,6 +471,10 @@ init();
 // ---------------------------------------------------------------- export
 function exportTo(app, dl) {
   if (!state.job) return;
+  if (!state.approved && (app || isPrintFile(dl || ""))) {
+    openTab("files");
+    return hint("A volunteer needs to sign off before the print files can be downloaded.");
+  }
   const fileUrl = (name) => `${location.origin}/api/jobs/${state.job}/files/${name}`;
   if (dl) {
     const a = document.createElement("a");

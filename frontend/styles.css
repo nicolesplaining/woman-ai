@@ -300,6 +300,7 @@ table.parts td.n { font-family: var(--mono); font-size: 12.5px; white-space: now
 .files a.dl { font-weight: 600; font-size: 13px; padding: 6px 12px; border-radius: 9px; border: 1px solid var(--line); color: var(--ink); }
 .files a.dl:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
 .files.locked a.dl { pointer-events: none; opacity: .35; }
+.files li.locked span.dl { font-weight: 600; font-size: 13px; padding: 6px 12px; border-radius: 9px; border: 1px dashed var(--line); color: var(--ink); opacity: .5; cursor: not-allowed; }
 .approve { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; margin-bottom: 14px; }
 .approve label { margin: 0; }
 .approved { background: var(--teal-soft); border-radius: 12px; padding: 10px 14px; font-size: 14px; margin-bottom: 12px; }

@@ -42,6 +42,7 @@ class GauntletParams:
     body_offset_mm: float = 18.0  # hinge to the distal edge of the shell
     length_mm: Optional[float] = None
     opening_deg: float = 110.0  # angular size of the volar opening
+    strap_positions: tuple = (0.30, 0.78)  # strap slots, as fractions of the gauntlet length from the hand end
     pattern_height_mm: float = 0.0  # >0 raised, <0 recessed
     name_side: str = "+x"
 
@@ -144,7 +145,7 @@ def build_gauntlet(
     track_z1 = track_z0 + 55.0 * track_scale
     if track_z1 > z_end - 2:
         track_z1 = z_end - 2
-    strap_z = [z_start + 0.30 * length, z_start + 0.78 * length]
+    strap_z = [z_start + f * length for f in p.strap_positions]
     slot_th = [edge_th[0] - np.radians(16), edge_th[1] + np.radians(16)]
 
     info = {

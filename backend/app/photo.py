@@ -331,6 +331,32 @@ def refine_wrist(p: Profile, estimate: Optional[float], hand_present: bool = Tru
     return float(p.s[i]), "narrowest point"
 
 
+def measure_sound_hand(rect: Rectified, p: Profile, reading: Optional[dict] = None) -> dict:
+    """Sound-hand length (wrist crease to fingertip) and breadth from the top-view photo.
+
+    reading: Claude's reading of the photo ({"wrist_tick_mm", "knuckle_tick_mm"}, -1 when unknown).
+    Returns {"hand_length", "hand_breadth", "wrist_s", "warnings"} in mm.
+    """
+    reading = reading or {}
+    warnings = []
+    cw = reading.get("wrist_tick_mm", -1)
+    ws, _ = refine_wrist(p, cw if cw is not None and cw >= 0 else None)
+    if not p.valid[:3].any():
+        warnings.append("The fingertips aren't fully on the sheet in the sound-hand photo; hand length may be short.")
+    L = ws
+    ck = reading.get("knuckle_tick_mm", -1)
+    k_s = float(ck) if ck is not None and ck >= 0 and 0.30 * L <= ws - ck <= 0.68 * L else ws - 0.59 * L
+    # Hand breadth (ANSUR II "hand breadth") is the width across the knuckles. Average a short band
+    # at the knuckle line; the widest point nearby is the palm behind the knuckles, which reads wide.
+    spr = smooth_profile(p)
+    win = (np.abs(p.s - k_s) <= 3) & p.valid
+    breadth_app = float(spr[win].mean()) if win.any() else float(np.interp(k_s, p.s, spr))
+    H = rect.camera_height_mm
+    breadth = breadth_app * (H - 14.0) / H
+    length = L * (H - 3.0) / H
+    return {"hand_length": round(length, 1), "hand_breadth": round(breadth, 1), "wrist_s": ws, "warnings": warnings}
+
+
 # ---------------------------------------------------------------- overlays for Claude and the UI
 
 def overlay(rect: Rectified, mask: np.ndarray, prof: Profile, title: str, wrist_s: Optional[float] = None) -> bytes:
